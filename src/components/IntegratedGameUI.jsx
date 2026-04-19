@@ -4,18 +4,21 @@ import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Cr
 
 // --- ПОДГОТОВКА КАРТИНОК ---
 import tempImg from '../assets/hero.png'; 
-import imgWelcome from '../assets/ava.jpg'; 
+import tempImg2 from '../assets/hero2.jpg';
+import imgWelcome from '../assets/ava.jpg'; // Твой аватар
 
-const imgMain = tempImg; const imgShy = tempImg; const imgScared = tempImg; const imgCool = tempImg;
+const imgMain = tempImg; 
+const imgShy = tempImg2; 
+const imgScared = tempImg2; 
+const imgCool = tempImg2;
 
 // --- СЛОВАРЬ ПЕРЕВОДОВ (i18n) ---
 const LANGS = ['ru', 'en', 'uz', 'jp'];
 
 const DICT = {
   ru: {
-    // Системные логи и кнопки оставляем на английском для сохранения стиля
     scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
-    anomaly: "UNKNOWN // ANOMALY", monitoring: "MONITORING_ACTIVE", warn: "WARNING: UNAUTHORIZED ACCESS ATTEMPT DETECTED.",
+    anomaly: "S.O.K.A // ARCHITECT", monitoring: "MONITORING_ACTIVE", warn: "WARNING: UNAUTHORIZED ACCESS ATTEMPT DETECTED.",
     bypassing: "BYPASSING_SECURITY...", ok: "OK", init: "INITIATING_OVERRIDE...", done: "DONE",
     conn_est: "CONNECTION_ESTABLISHED", override: "OVERRIDE_SYSTEM", decrypting: "DECRYPTING_FEED...",
     sys_online: "SYS_ONLINE", sys_breach: "SYS_BREACH", media_sync: "MEDIA_STREAM_SYNC",
@@ -25,42 +28,21 @@ const DICT = {
     exported: "EXPORTED_DATA", modules: "SYSTEM_MODULES", extract: "EXTRACT_SOURCE_CODE",
     tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
     
-    // Переводим только смысловой контент:
-    about_title: "ИДЕНТИФИКАЦИЯ УСПЕШНА.",
-    about_desc: "Оператор: Создатель интерфейсов. Спецификация: Ломка стандартов UX/UI. Специализация: Кибер-дизайн, интерактивные системы, параллакс-интерфейсы.",
-    proj_title: "ОБНАРУЖЕНЫ ДИРЕКТОРИИ:",
-    skill_title: "АКТИВНЫЕ МОДУЛИ СИСТЕМЫ:",
+    about_title: "ИДЕНТИФИКАЦИЯ: SOKA_CORE_IDENTIFIED",
+    about_desc: "Оператор: Python Backend-разработчик. Спецификация: Архитектура Telegram-экосистем и Django-серверов. Специализация: Синтез надежной серверной логики и современной цифровой эстетики. Блендинг бэкенда с концепт-артом и Pixel Art.",
+    proj_title: "РЕПОЗИТОРИИ ОБНАРУЖЕНЫ:",
+    skill_title: "АКТИВНЫЕ МОДУЛИ ОПЕРАТОРА:",
     class_title: "ВНИМАНИЕ. ПРОТОКОЛ ОМЕГА.",
-    class_desc: "Вы нарушили периметр безопасности. Идет отслеживание вашего местоположения. Отключитесь немедленно.",
-    p1_desc: "Многофункциональный Telegram-бот для сбора обратной связи, модерации запросов и анонимного общения. Интегрирована система тикетов. Данные надежно зашифрованы.",
-    p2_desc: "Засекреченный внутренний проект. Библиотека кибер-компонентов для создания высоконагруженных футуристичных интерфейсов и дата-панелей.",
-    p3_desc: "Система обхода брандмауэров корпоративного уровня. В данный момент сервер не отвечает. Требуется ручная перезагрузка ядра."
+    class_desc: "Локализация: EN/RU/UZ. Доступ к нейросетевым агентам (LLM) получен. Система готова к интеграции ИИ и сложной автоматизации.",
+    
+    p1_desc: "KAWAII_MANGA: Система управления цифровыми библиотеками. Интеграция с Python-ядром для обработки и структурирования контента.",
+    p2_desc: "BMI_APP: Аналитический модуль биометрических показателей. Высокая точность расчетов и кроссплатформенный интерфейс.",
+    p3_desc: "ENF_CORE: Экспериментальный сетевой фреймворк. Оптимизация инфраструктурных запросов и сетевого взаимодействия.",
+    p4_desc: "TG_FEEDBACK_BOT: Шифрованный канал связи на Aiogram. Система тикетов, модерация и полная анонимность данных."
   },
   en: {
     scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
-    anomaly: "UNKNOWN // ANOMALY", monitoring: "MONITORING_ACTIVE", warn: "WARNING: UNAUTHORIZED ACCESS ATTEMPT DETECTED.",
-    bypassing: "BYPASSING_SECURITY...", ok: "OK", init: "INITIATING_OVERRIDE...", done: "DONE",
-    conn_est: "CONNECTION_ESTABLISHED", override: "OVERRIDE_SYSTEM", decrypting: "DECRYPTING_FEED...",
-    sys_online: "SYS_ONLINE", sys_breach: "SYS_BREACH", media_sync: "MEDIA_STREAM_SYNC",
-    target_lock: "TARGET_LOCK", engaged: "ENGAGED", critical: "CRITICAL",
-    status_decrypted: "Status: Decrypted", access_granted: "ACCESS_GRANTED",
-    mute: "MUTE", unmute: "UNMUTE", disconnect: "DISCONNECT", secure: "SECURE_CHANNEL",
-    exported: "EXPORTED_DATA", modules: "SYSTEM_MODULES", extract: "EXTRACT_SOURCE_CODE",
-    tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
-    about_title: "IDENTIFICATION SUCCESSFUL.",
-    about_desc: "Operator: Interface Architect. Specification: Breaking UX/UI standards. Specialization: Cyber-design, interactive systems, parallax UIs.",
-    proj_title: "DIRECTORIES DETECTED:",
-    skill_title: "ACTIVE SYSTEM MODULES:",
-    class_title: "WARNING. OMEGA PROTOCOL.",
-    class_desc: "You have breached the security perimeter. Your location is being tracked. Disconnect immediately.",
-    p1_desc: "Multifunctional Telegram bot for feedback collection, request moderation, and anonymous communication. Integrated ticket system. Data is securely encrypted.",
-    p2_desc: "Classified internal project. Cyber-component library for building high-load futuristic interfaces and data panels.",
-    p3_desc: "Corporate-grade firewall bypass system. Server is currently unresponsive. Manual core reboot required."
-  },
-  uz: {
-    // Системные логи и кнопки оставляем на английском
-    scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
-    anomaly: "UNKNOWN // ANOMALY", monitoring: "MONITORING_ACTIVE", warn: "WARNING: UNAUTHORIZED ACCESS ATTEMPT DETECTED.",
+    anomaly: "S.O.K.A // ARCHITECT", monitoring: "MONITORING_ACTIVE", warn: "WARNING: UNAUTHORIZED ACCESS ATTEMPT DETECTED.",
     bypassing: "BYPASSING_SECURITY...", ok: "OK", init: "INITIATING_OVERRIDE...", done: "DONE",
     conn_est: "CONNECTION_ESTABLISHED", override: "OVERRIDE_SYSTEM", decrypting: "DECRYPTING_FEED...",
     sys_online: "SYS_ONLINE", sys_breach: "SYS_BREACH", media_sync: "MEDIA_STREAM_SYNC",
@@ -70,20 +52,44 @@ const DICT = {
     exported: "EXPORTED_DATA", modules: "SYSTEM_MODULES", extract: "EXTRACT_SOURCE_CODE",
     tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
     
-    // Переводим только смысловой контент:
-    about_title: "IDENTIFIKATSIYA MUVAFFAQIYATLI.",
-    about_desc: "Operator: Interfeys me'mori. Xususiyat: UX/UI standartlarini buzish. Ixtisoslik: Kiber-dizayn, interaktiv tizimlar.",
-    proj_title: "PAPKALAR TOPILDI:",
+    about_title: "IDENTIFICATION: SOKA_CORE_IDENTIFIED",
+    about_desc: "Operator: Python Backend Developer. Spec: Telegram Ecosystem Architecture & Django Systems. Specialization: Blending solid backend logic with modern digital aesthetics. Core: Logic meets Creativity.",
+    proj_title: "REPOSITORIES DETECTED:",
+    skill_title: "ACTIVE OPERATOR MODULES:",
+    class_title: "WARNING. OMEGA PROTOCOL.",
+    class_desc: "Localization: EN/RU/UZ. AI/LLM Agents integration access granted. System ready for neural expansion.",
+    
+    p1_desc: "KAWAII_MANGA: Digital library management system. High-performance Python core for content processing.",
+    p2_desc: "BMI_APP: Biometric data analysis module. High-precision calculation engine with localized UI.",
+    p3_desc: "ENF_CORE: Experimental network framework. Infrastructure request optimization.",
+    p4_desc: "TG_FEEDBACK_BOT: Encrypted communication bridge. Aiogram-based moderation and anonymous messaging."
+  },
+  uz: {
+    scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
+    anomaly: "S.O.K.A // ME'MOR", monitoring: "MONITORING_ACTIVE", warn: "DIQQAT: RUXSATSIZ KIRISH ANIQLANDI.",
+    bypassing: "BYPASSING_SECURITY...", ok: "OK", init: "INITIATING_OVERRIDE...", done: "DONE",
+    conn_est: "ALOQA O'RNATILDI", override: "TIZIMNI BOSHQARISH", decrypting: "DECRYPTING_FEED...",
+    sys_online: "SYS_ONLINE", sys_breach: "SYS_BREACH", media_sync: "MEDIA_STREAM_SYNC",
+    target_lock: "TARGET_LOCK", engaged: "ENGAGED", critical: "CRITICAL",
+    status_decrypted: "Status: Deciphered", access_granted: "ACCESS_GRANTED",
+    mute: "MUTE", unmute: "UNMUTE", disconnect: "DISCONNECT", secure: "SECURE_CHANNEL",
+    exported: "EXPORTED_DATA", modules: "SYSTEM_MODULES", extract: "EXTRACT_SOURCE_CODE",
+    tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
+    
+    about_title: "IDENTIFIKATSIYA: SOKA_CORE",
+    about_desc: "Operator: Python Backend Dasturchi. Telegram botlar arxitekturasi va Django tizimlari. Kuchli backend mantiqi va zamonaviy raqamli estetika uyg'unligi.",
+    proj_title: "REPOZITORIYLAR TOPILDI:",
     skill_title: "FAOL TIZIM MODULLARI:",
-    class_title: "OGOHLANTIRISH. OMEGA PROTOKOLI.",
-    class_desc: "Siz xavfsizlik perimetrini buzdingiz. Joylashuvingiz kuzatilmoqda. Zudlik bilan aloqani uzing.",
-    p1_desc: "Fikr-mulohaza yig'ish va anonim muloqot uchun ko'p funksiyali Telegram bot. Ma'lumotlar shifrlangan.",
-    p2_desc: "Maxfiy ichki loyiha. Yuqori yuklamali futuristik interfeyslar yaratish uchun kiber-komponentlar kutubxonasi.",
-    p3_desc: "Korporativ darajadagi xavfsizlik tizimini aylanib o'tish. Server javob bermayapti. Qayta ishga tushirish talab qilinadi."
+    class_title: "DIQQAT. OMEGA PROTOKOLI.",
+    class_desc: "Mahalliylashtirish: EN/RU/UZ. LLM agentlari integratsiyasi mavjud. Tizim sun'iy intellektga tayyor.",
+    p1_desc: "KAWAII_MANGA: Raqamli kutubxona boshqaruv tizimi. Python-yadrosi asosida ishlaydi.",
+    p2_desc: "BMI_APP: Biometrik ko'rsatkichlarni tahlil qilish moduli. Yuqori aniqlikdagi hisob-kitoblar.",
+    p3_desc: "ENF_CORE: Tarmoq infratuzilmasi uchun eksperimental freymvork.",
+    p4_desc: "TG_FEEDBACK_BOT: Maxfiy aloqa ko'prigi. Aiogram asosidagi ticket-tizimi."
   },
   jp: {
     scan: "セクター7_スキャン中...", match: "一致_検出:", entity: "エンティティ_クラス:", status: "ステータス:",
-    anomaly: "不明 // 異常", monitoring: "監視_アクティブ", warn: "警告：不正アクセス試行を検知。",
+    anomaly: "S.O.K.A // 設計者", monitoring: "監視_アクティブ", warn: "警告：不正アクセス試行を検知。",
     bypassing: "セキュリティ_バイパス中...", ok: "OK", init: "オーバーライド_開始中...", done: "完了",
     conn_est: "接続_確立", override: "システム_オーバーライド", decrypting: "復号化中...",
     sys_online: "システム_オンライン", sys_breach: "システム_侵害", media_sync: "メディア_同期",
@@ -92,19 +98,21 @@ const DICT = {
     mute: "ミュート", unmute: "ミュート解除", disconnect: "切断", secure: "セキュア_チャネル",
     exported: "エクスポート_データ", modules: "システム_モジュール", extract: "ソースコード_抽出",
     tab_about: "オペレーター_ID", tab_projects: "データバンク", tab_skills: "システム容量", tab_class: "機密",
-    about_title: "認証_成功。",
-    about_desc: "オペレーター：インターフェース設計者。仕様：UX/UI標準の破壊。専門：サイバーデザイン、インタラクティブシステム。",
-    proj_title: "検出されたディレクトリ:",
+    
+    about_title: "認証：SOKA_コア",
+    about_desc: "オペレーター：Pythonバックエンド開発者。仕様：TelegramアーキテクチャおよびDjangoシステム。ロジックとデジタル美学の融合。",
+    proj_title: "検出されたリポジトリ:",
     skill_title: "アクティブ_システム_モジュール:",
     class_title: "警告。オメガ_プロトコル。",
-    class_desc: "セキュリティ境界線を突破しました。現在地を追跡中です。直ちに切断してください。",
-    p1_desc: "フィードバック収集および匿名通信用の多機能Telegramボット。チケットシステム統合済み。データ暗号化。",
-    p2_desc: "機密内部プロジェクト。高負荷な未来型インターフェース構築用のサイバーコンポーネントライブラリ。",
-    p3_desc: "企業レベルのファイアウォールバイパスシステム。サーバー応答なし。手動でのコア再起動が必要。"
+    class_desc: "ローカライズ：EN/RU/UZ。LLMエージェントの統合準備完了。ニューラル拡張の準備が整いました。",
+    p1_desc: "KAWAII_MANGA: デジタル・ライブラリ管理システム。Pythonコア搭載。",
+    p2_desc: "BMI_APP: 生体データ分析モジュール。高精度な計算エンジン。",
+    p3_desc: "ENF_CORE: 実験的なネットワーク・フレームワーク。",
+    p4_desc: "TG_FEEDBACK_BOT: 暗号化されたフィードバック・ブリッジ。Aiogramによる匿名通信。"
   }
 };
 
-// --- 1. УМНЫЙ КИБЕР-КУРСОР ---
+// --- УМНЫЙ КИБЕР-КУРСОР ---
 const SmartCursor = () => {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -135,7 +143,7 @@ const SmartCursor = () => {
   );
 };
 
-// --- 2. ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
+// --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
 const Typewriter = ({ text, speed = 20 }) => {
   const [displayed, setDisplayed] = useState('');
   const [isDone, setIsDone] = useState(false);
@@ -167,8 +175,8 @@ const Typewriter = ({ text, speed = 20 }) => {
 const LiveSystemLog = ({ isRedAlert }) => {
   const [logs, setLogs] = useState([]);
   useEffect(() => {
-    const normalPhrases = ["PACKET_RECEIVED: 0x9A", "DECRYPT_THREAD_ACTIVE", "PORT_SCAN_INIT", "ANALYZE_PATTERN"];
-    const alertPhrases = ["CRITICAL_BREACH_DETECTED", "UNAUTHORIZED_ACCESS", "SYSTEM_COMPROMISED", "INITIATING_WIPE"];
+    const normalPhrases = ["PYTHON_ENV_LOADED", "DJANGO_QUERY_OPTIMIZE", "REDIS_CACHE_SYNC", "AIOGRAM_POLLING_INIT"];
+    const alertPhrases = ["CORE_OVERLOAD", "DATABASE_BREACH_SIM", "ACCESS_VIOLATION", "REBOOTING_NEURAL_LINK"];
     
     const interval = setInterval(() => {
       const phrases = isRedAlert ? alertPhrases : normalPhrases;
@@ -204,7 +212,7 @@ const AudioWaveform = ({ active, isRedAlert }) => {
   );
 };
 
-// --- КОМПОНЕНТ ТЕРМИНАЛА ---
+// --- КОМПОНЕНТ ТЕРМИНАЛА ВНУТРИ ПРОЕКТА ---
 const TerminalSimulation = ({ project, playSound, t }) => {
   const [stage, setStage] = useState('connecting'); 
   const [logs, setLogs] = useState([]);
@@ -215,8 +223,8 @@ const TerminalSimulation = ({ project, playSound, t }) => {
     playSound(300, 'square', 0.1);
     
     const bootSequence = [
-      "ESTABLISHING_P2P_CONNECTION...", "HANDSHAKE_SUCCESSFUL.", "BYPASSING_FIREWALL...",
-      "ACCESSING_DATABANK_NODE...", "INITIATING_DECRYPTION_PROTOCOL..."
+      "REQUESTING_GET_PROTOCOL...", "DATA_FRAME_DECODED.", "HANDSHAKING_WITH_GITHUB...",
+      "SOURCE_CODE_PULLING...", "ANALYZING_CORE_DEPENDENCIES..."
     ];
 
     let i = 0;
@@ -233,7 +241,6 @@ const TerminalSimulation = ({ project, playSound, t }) => {
     }, 400);
 
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.name]); 
 
   if (stage !== 'complete') {
@@ -256,8 +263,8 @@ const TerminalSimulation = ({ project, playSound, t }) => {
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-white tracking-widest">{project.name}</h2>
           <div className="text-xs text-white/40 mt-2 flex gap-4">
-            <span>{t('status')} <span className={project.status === 'ONLINE' ? 'text-lime-400' : 'text-red-500'}>{project.status}</span></span>
-            <span>ENCRYPTION: <span className="text-cyan-400">BYPASSED</span></span>
+            <span>{t('status')} <span className="text-lime-400">{project.status}</span></span>
+            <span>REPO: <span className="text-cyan-400">GITHUB_SOURCE</span></span>
           </div>
         </div>
       </div>
@@ -301,6 +308,7 @@ const TerminalSimulation = ({ project, playSound, t }) => {
   );
 };
 
+// --- ГЛАВНЫЙ КОМПОНЕНТ ---
 const IntegratedGameUI = () => {
   const [langIndex, setLangIndex] = useState(0);
   const lang = LANGS[langIndex];
@@ -327,7 +335,7 @@ const IntegratedGameUI = () => {
   }, []);
 
   const playSound = (freq = 440, type = 'sine', duration = 0.1) => {
-    if (isMuted || volume === 0 || systemState !== 'ready') return;
+    if (volume === 0 || systemState !== 'ready') return;
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioCtx.createOscillator();
@@ -415,25 +423,29 @@ const IntegratedGameUI = () => {
       id: 'projects', label: t('tab_projects'), code: '0x00B2', icon: ShieldAlert, color: 'text-pink-500', bgColor: 'bg-pink-500', border: 'border-pink-500', img: imgScared, 
       type: 'projects', title: t('proj_title'),
       items: [
-        { name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/devvesama/tg-feedback-bot', description: t('p1_desc'), tech: ['Node.js', 'Telegraf API', 'MongoDB', 'Docker'] },
-        { name: 'NEXUS_UI_FRAMEWORK', status: 'ENCRYPTED', url: '#', description: t('p2_desc'), tech: ['React', 'Framer Motion', 'Tailwind CSS'] },
-        { name: 'GHOST_PROTOCOL_API', status: 'OFFLINE', url: '#', description: t('p3_desc'), tech: ['Python', 'Socket.io', 'Cryptography'] }
+        { name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'] },
+        { name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', description: t('p2_desc'), tech: ['Python', 'Tkinter/Kivy', 'Logic'] },
+        { name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'] },
+        { name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', description: t('p4_desc'), tech: ['Aiogram', 'Redis', 'Docker'] }
       ]
     },
     { 
       id: 'skills', label: t('tab_skills'), code: '0x00C3', icon: Cpu, color: 'text-lime-400', bgColor: 'bg-lime-400', border: 'border-lime-400', img: imgCool, 
       type: 'skills', title: t('skill_title'),
       items: [
-        { name: 'React.js_Core', value: 95, alert: false }, { name: 'Tailwind_Engine', value: 100, alert: true },
-        { name: 'Framer_Motion_UI', value: 85, alert: false }, { name: 'Cyber_UX_Design', value: 90, alert: false },
-        { name: 'Node.js_Backend', value: 75, alert: false }, { name: 'Data_Encryption', value: 80, alert: false }
+        { name: 'Python_Backend', value: 95, alert: false }, 
+        { name: 'Django_Core', value: 90, alert: false },
+        { name: 'Aiogram_Bot_Arch', value: 95, alert: true }, 
+        { name: 'SQL_PostgreSQL', value: 85, alert: false },
+        { name: 'React_Frontend', value: 75, alert: false }, 
+        { name: 'Digital_PixelArt', value: 80, alert: false }
       ]
     },
   ];
 
   const tabs = isRedAlert 
     ? [...getBaseTabs(), { 
-        id: 'classified', label: t('tab_class'), code: '0xDEAD', icon: Skull, color: 'text-red-500', bgColor: 'bg-red-600', border: 'border-red-500', img: imgMain, 
+        id: 'classified', label: t('tab_class'), code: '0xDEAD', icon: Skull, color: 'text-red-500', bgColor: 'bg-red-600', border: 'border-red-500', img: tempImg2, 
         type: 'text', title: t('class_title'), content: t('class_desc') 
       }]
     : getBaseTabs();
@@ -510,7 +522,7 @@ const IntegratedGameUI = () => {
                       <div className="space-y-2 md:space-y-3">
                         <p className="text-white/50">{'>'} {t('scan')}</p>
                         <div className="h-1 md:h-2"></div>
-                        <p>{'>'} {t('match')} <span className="text-white font-bold"><Typewriter text="KYRAHANG" speed={50} /></span></p>
+                        <p>{'>'} {t('match')} <span className="text-white font-bold"><Typewriter text="S.O.K.A" speed={50} /></span></p>
                         <p>{'>'} {t('entity')} <span className="text-white font-bold"><Typewriter text={t('anomaly')} speed={40} /></span></p>
                         <p>{'>'} {t('status')} <span className="text-red-500 font-bold">{t('monitoring')}</span></p>
                         <div className="h-1 md:h-2"></div>
@@ -599,8 +611,8 @@ const IntegratedGameUI = () => {
                 <div className="absolute right-[5%] bottom-[10%] w-[50%] h-[80%] z-20 flex justify-end items-center pointer-events-none font-mono text-base">
                   <AnimatePresence mode="wait">
                     {!activeTab ? (
-                      <motion.div key="main-miku" initial={{ opacity: 0, x: 50, filter: "blur(10px)" }} animate={{ opacity: 0.8, x: 0, filter: "blur(0px)" }} exit={{ opacity: 0, filter: "blur(10px)" }} transition={{ duration: 0.5 }} className="relative h-full w-full flex items-center justify-end">
-                        <div className={`absolute w-[80%] h-[100%] border animate-pulse rounded-lg ${isRedAlert ? 'border-red-500/50 bg-red-500/10' : 'border-cyan-400/20 bg-cyan-400/5'}`}>
+                      <motion.div key="main-miku" initial={{ opacity: 0, x: 50, filter: "blur(10px)" }} animate={{ opacity: 0.8, x: 0, filter: "blur(0px)" }} exit={{ opacity: 0, filter: "blur(10px)" }} transition={{ duration: 0.5 }} className="relative h-full w-full flex items-center justify-center translate-x-60">
+                        <div className={`absolute w-[62%] h-[100%] border animate-pulse rounded-lg ${isRedAlert ? 'border-red-500/50 bg-red-500/10' : 'border-cyan-400/20 bg-cyan-400/5'}`}>
                           <div className={`absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 ${isRedAlert ? 'border-red-500' : 'border-cyan-400'}`}></div>
                           <div className={`absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 ${isRedAlert ? 'border-red-500' : 'border-cyan-400'}`}></div>
                           <div className={`absolute top-2 left-2 font-mono text-[10px] ${isRedAlert ? 'text-red-500' : 'text-cyan-400'}`}>{t('target_lock')}: {isRedAlert ? t('critical') : t('engaged')}</div>
@@ -608,67 +620,62 @@ const IntegratedGameUI = () => {
                         <img src={imgMain} alt="Main Target" className={`h-[95%] object-contain mix-blend-screen drop-shadow-[0_0_20px_rgba(0,229,255,0.2)] z-10 ${isRedAlert ? 'filter contrast-150 saturate-200 hue-rotate-[-30deg]' : ''}`} />
                       </motion.div>
                     ) : (
-                      <motion.div key={activeTabData.id} initial={{ opacity: 0, x: 50, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.95 }} className="w-[500px] md:w-[600px] flex flex-col gap-6 pointer-events-auto">
-                        <div className="relative w-full aspect-[4/3] border border-white/20 bg-black/60 p-4 overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)] group clickable">
-                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 0.2] }} className={`absolute inset-0 mix-blend-overlay z-10 pointer-events-none ${activeTabData.id === 'classified' ? 'bg-red-500/30' : 'bg-cyan-400/20'}`} />
-                          <img src={activeTabData.img} alt="target" className="w-full h-full object-contain filter contrast-125 mix-blend-screen" />
-                          <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white/40"></div>
-                          <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white/40"></div>
-                          <div className="absolute bottom-4 left-4 font-mono text-[10px] text-white/50">{activeTabData.code} // ROOT</div>
-                        </div>
-                        
-                        <div className="bg-black/90 border-t-4 border-white border p-8 font-mono relative backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                          <div className={`absolute top-0 right-0 h-1 w-32 ${activeTabData.bgColor}`}></div>
-                          
-                          <div className="text-[10px] md:text-xs text-white/40 mb-4 tracking-[0.2em] flex justify-between uppercase border-b border-white/10 pb-4">
-                            <span>{t('status_decrypted')}</span>
-                            <span className={activeTabData.id === 'classified' ? 'text-red-500 animate-pulse' : 'text-cyan-400'}>{t('access_granted')}</span>
+                      <motion.div key={activeTabData.id} initial={{ opacity: 0, x: 50, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.95 }} className="w-[500px] md:w-[600px] h-full py-10 flex flex-col pointer-events-auto">
+                        <div className="relative w-full h-full border-t-4 border-white bg-black/80 p-8 font-mono flex flex-col overflow-hidden backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.8)] border-x border-b border-white/20">
+                          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+                            <img src={activeTabData.img} alt="background" className="w-full h-full object-cover filter grayscale contrast-150 mix-blend-screen" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
                           </div>
-                          
-                          <div className="text-base md:text-lg text-white leading-relaxed font-bold">
-                            <div className="mb-4 text-white/50 text-sm"><Typewriter text={activeTabData.title} speed={30} /></div>
-                            
-                            {activeTabData.type === 'text' && <p className="text-white"><Typewriter text={activeTabData.content} speed={15} /></p>}
-                            
-                            {activeTabData.type === 'skills' && (
-                              <div className={`mt-4 flex flex-col gap-4 max-h-[180px] overflow-y-auto pr-2 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
-                                {activeTabData.items.map((skill, i) => (
-                                  <div key={i} className="flex flex-col gap-1 w-full shrink-0">
-                                    <div className="flex justify-between text-[10px] font-mono text-white/70">
-                                      <span>{skill.name}</span>
-                                      <span className={skill.alert ? "text-red-500 animate-pulse" : "text-lime-400"}>{skill.value}% {skill.alert && '[OVERLOAD]'}</span>
+                          <div className={`absolute top-0 right-0 h-1 w-32 ${activeTabData.bgColor}`}></div>
+                          <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white/20 z-10"></div>
+                          <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white/20 z-10"></div>
+                          <div className="relative z-10 flex-1 flex flex-col h-full">
+                            <div className="text-[10px] md:text-xs text-white/40 mb-4 tracking-[0.2em] flex justify-between uppercase border-b border-white/10 pb-4">
+                              <span>{t('status_decrypted')} // {activeTabData.code}</span>
+                              <span className={activeTabData.id === 'classified' ? 'text-red-500 animate-pulse' : 'text-cyan-400'}>{t('access_granted')}</span>
+                            </div>
+                            <div className="text-base md:text-lg text-white leading-relaxed font-bold flex-1 flex flex-col">
+                              <div className="mb-6 text-white/50 text-sm"><Typewriter text={activeTabData.title} speed={30} /></div>
+                              {activeTabData.type === 'text' && <p className="text-white text-lg leading-loose"><Typewriter text={activeTabData.content} speed={15} /></p>}
+                              {activeTabData.type === 'skills' && (
+                                <div className={`mt-4 flex flex-col gap-6 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
+                                  {activeTabData.items.map((skill, i) => (
+                                    <div key={i} className="flex flex-col gap-2 w-full shrink-0">
+                                      <div className="flex justify-between text-xs font-mono text-white/80">
+                                        <span>{skill.name}</span>
+                                        <span className={skill.alert ? "text-red-500 animate-pulse" : "text-lime-400"}>{skill.value}% {skill.alert && '[OVERLOAD]'}</span>
+                                      </div>
+                                      <div className="w-full h-2 bg-white/10 relative overflow-hidden">
+                                        <motion.div
+                                          initial={{ width: 0 }} animate={{ width: `${skill.value}%` }} transition={{ duration: 1, delay: 0.2 + (i * 0.1), ease: "easeOut" }}
+                                          className={`absolute top-0 left-0 h-full ${skill.alert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-lime-400 shadow-[0_0_10px_#a3e635]'}`}
+                                        />
+                                      </div>
                                     </div>
-                                    <div className="w-full h-1.5 bg-white/10 relative overflow-hidden">
-                                      <motion.div
-                                        initial={{ width: 0 }} animate={{ width: `${skill.value}%` }} transition={{ duration: 1, delay: 0.5 + (i * 0.2), ease: "easeOut" }}
-                                        className={`absolute top-0 left-0 h-full ${skill.alert ? 'bg-red-500 shadow-[0_0_8px_#ef4444]' : 'bg-lime-400 shadow-[0_0_8px_#a3e635]'}`}
-                                      />
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {activeTabData.type === 'projects' && (
-                              <div className={`mt-4 flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-2 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
-                                {activeTabData.items.map((proj, i) => (
-                                  <motion.div
-                                    key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.5 + (i * 0.1) }}
-                                    className="group flex items-center justify-between p-3 border border-white/10 hover:border-pink-500 hover:bg-pink-500/10 cursor-pointer transition-all clickable shrink-0"
-                                    onClick={() => { playSound(1000, 'square', 0.05); setSelectedProject(proj); }}
-                                  >
-                                    <div className="flex items-center gap-3">
-                                      <Folder size={16} className="text-white/30 group-hover:text-pink-500 transition-colors" />
-                                      <span className="text-white/80 group-hover:text-white font-mono text-sm tracking-widest">{proj.name}</span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                      <span className={`text-[10px] font-mono ${proj.status === 'ONLINE' ? 'text-lime-400' : proj.status === 'ENCRYPTED' ? 'text-red-500' : 'text-white/40'}`}>[{proj.status}]</span>
-                                      <ChevronRight size={14} className="text-white/20 group-hover:text-pink-500 transition-transform group-hover:translate-x-1" />
-                                    </div>
-                                  </motion.div>
-                                ))}
-                              </div>
-                            )}
+                                  ))}
+                                </div>
+                              )}
+                              {activeTabData.type === 'projects' && (
+                                <div className={`mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
+                                  {activeTabData.items.map((proj, i) => (
+                                    <motion.div
+                                      key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
+                                      className="group flex items-center justify-between p-4 border border-white/10 bg-black/40 hover:border-pink-500 hover:bg-pink-500/20 cursor-pointer transition-all clickable shrink-0 backdrop-blur-sm"
+                                      onClick={() => { playSound(1000, 'square', 0.05); setSelectedProject(proj); }}
+                                    >
+                                      <div className="flex items-center gap-4">
+                                        <Folder size={20} className="text-white/30 group-hover:text-pink-500 transition-colors" />
+                                        <span className="text-white/90 group-hover:text-white font-mono text-base tracking-widest">{proj.name}</span>
+                                      </div>
+                                      <div className="flex items-center gap-4">
+                                        <span className={`text-xs font-mono text-lime-400`}>[{proj.status}]</span>
+                                        <ChevronRight size={16} className="text-white/20 group-hover:text-pink-500 transition-transform group-hover:translate-x-1" />
+                                      </div>
+                                    </motion.div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </motion.div>
@@ -677,28 +684,21 @@ const IntegratedGameUI = () => {
                 </div>
 
                 <div className="fixed bottom-10 right-10 z-50 flex flex-row-reverse items-center gap-4">
-                  {/* --- КНОПКА ГРОМКОСТИ --- */}
                   <div className="flex flex-row-reverse items-center relative">
                     <div 
                       onClick={() => setIsVolumeExpanded(!isVolumeExpanded)}
                       className={`clickable flex items-center justify-center w-14 h-14 bg-black/90 border backdrop-blur-md transition-all z-20 ${isVolumeExpanded ? 'border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'border-white/60 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:bg-white/10 hover:border-white'}`}
                     >
                       {isMuted || volume === 0 
-                        ? <VolumeX size={24} strokeWidth={2.5} className={`drop-shadow-[0_0_2px_rgba(255,255,255,0.8)] ${isRedAlert ? 'text-red-500' : 'text-white opacity-60'}`} />
-                        : <Volume2 size={24} strokeWidth={2.5} className={`drop-shadow-[0_0_2px_rgba(255,255,255,0.8)] ${isRedAlert ? 'text-red-500' : 'text-white'}`} />
+                        ? <VolumeX size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white opacity-60'} />
+                        : <Volume2 size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white'} />
                       }
                     </div>
                     <AnimatePresence>
                       {isVolumeExpanded && (
-                        <motion.div 
-                          initial={{ opacity: 0, width: 0, x: 20 }} animate={{ opacity: 1, width: 'auto', x: 0 }} exit={{ opacity: 0, width: 0, x: 20 }}
-                          className="overflow-hidden flex z-10"
-                        >
+                        <motion.div initial={{ opacity: 0, width: 0, x: 20 }} animate={{ opacity: 1, width: 'auto', x: 0 }} exit={{ opacity: 0, width: 0, x: 20 }} className="overflow-hidden flex z-10">
                           <div className="flex h-14 bg-black/80 border-y border-l border-white/20 backdrop-blur-md items-center px-4 pr-6 gap-6 w-max whitespace-nowrap">
-                            <div 
-                              onClick={toggleMute} 
-                              className={`clickable flex items-center gap-2 px-3 py-1.5 border transition-all ${isMuted ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 text-white/70 hover:text-white'}`}
-                            >
+                            <div onClick={toggleMute} className={`clickable flex items-center gap-2 px-3 py-1.5 border transition-all ${isMuted ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 text-white/70 hover:text-white'}`}>
                               {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
                               <span className="font-mono text-[10px] font-bold tracking-widest">{isMuted || volume === 0 ? t('unmute') : t('mute')}</span>
                             </div>
@@ -712,12 +712,7 @@ const IntegratedGameUI = () => {
                                 const isActive = !isMuted && volume >= barValue;
                                 let colorClass = 'bg-transparent border-white/20 hover:bg-white/20';
                                 if (isActive) colorClass = isRedAlert ? 'bg-red-500 border-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 border-cyan-400 shadow-[0_0_10px_#22d3ee]';
-                                return (
-                                  <div 
-                                    key={i} onClick={(e) => { e.stopPropagation(); handleVolumeChange(barValue); }} 
-                                    className={`clickable h-6 w-3 transform -skew-x-12 transition-all duration-150 border ${colorClass}`} 
-                                  />
-                                );
+                                return <div key={i} onClick={(e) => { e.stopPropagation(); handleVolumeChange(barValue); }} className={`clickable h-6 w-3 transform -skew-x-12 transition-all duration-150 border ${colorClass}`} />;
                               })}
                             </div>
                           </div>
@@ -726,7 +721,6 @@ const IntegratedGameUI = () => {
                     </AnimatePresence>
                   </div>
 
-                  {/* --- КНОПКА ПЕРЕКЛЮЧЕНИЯ ЯЗЫКА --- */}
                   <div 
                     onClick={() => { setLangIndex((prev) => (prev + 1) % LANGS.length); playSound(1000, 'square', 0.05); }}
                     className={`clickable flex items-center justify-center gap-2 h-14 px-4 bg-black/90 border transition-all z-20 ${isRedAlert ? 'border-red-500/50 hover:border-red-500 hover:bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 hover:bg-white/10 text-white/70 hover:text-white'} backdrop-blur-md font-mono text-[10px] md:text-xs tracking-widest uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
@@ -734,33 +728,18 @@ const IntegratedGameUI = () => {
                     <Globe size={16} className={isRedAlert ? "text-red-500" : "text-cyan-400"} />
                     [ {lang} ]
                   </div>
-
                 </div>
 
-                {/* --- МОДАЛЬНОЕ ОКНО ПРОЕКТА --- */}
                 <AnimatePresence>
                   {selectedProject && (
-                    <motion.div 
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
-                      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto"
-                      onClick={() => { setSelectedProject(null); playSound(600, 'sine', 0.1); }}
-                    >
-                      <motion.div 
-                        onClick={(e) => e.stopPropagation()}
-                        initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl bg-black border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.15)] font-mono flex flex-col overflow-hidden"
-                      >
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto" onClick={() => setSelectedProject(null)}>
+                      <motion.div onClick={(e) => e.stopPropagation()} initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="relative w-full max-w-2xl bg-black border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.15)] font-mono flex flex-col overflow-hidden">
                         <div className="flex justify-between items-center bg-white/5 border-b border-white/10 px-4 py-3 relative z-20">
                           <div className="flex items-center gap-3">
                             <Terminal size={16} className="text-pink-500" />
                             <span className="text-xs text-white/50 tracking-widest">{t('secure')} // {selectedProject.name}</span>
                           </div>
-                          <button 
-                            onClick={() => { setSelectedProject(null); playSound(600, 'sine', 0.1); }}
-                            className="text-white/40 hover:text-red-500 transition-colors clickable text-xs tracking-widest"
-                          >
-                            [ {t('disconnect')} ]
-                          </button>
+                          <button onClick={() => setSelectedProject(null)} className="text-white/40 hover:text-red-500 transition-colors clickable text-xs tracking-widest">[ {t('disconnect')} ]</button>
                         </div>
                         <div className="p-6 md:p-8 min-h-[350px] relative">
                           <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none z-10 opacity-30"></div>
@@ -770,7 +749,6 @@ const IntegratedGameUI = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-
               </motion.div>
             )}
           </AnimatePresence>
