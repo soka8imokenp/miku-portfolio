@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Crosshair, Skull, Camera, Folder, ChevronRight, Globe, Monitor, Smartphone } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Crosshair, Skull, Camera, Folder, ChevronRight, Globe, Monitor, Smartphone, Share2, Send, Code, Briefcase, Mail } from 'lucide-react';
 
 // --- ПОДГОТОВКА КАРТИНОК ---
 import tempImg from '../assets/hero.png'; 
@@ -50,9 +50,10 @@ const DICT = {
 
     view_visuals: "DECRYPT_VISUAL_FEED", back_to_data: "ВЕРНУТЬСЯ_В_ТЕРМИНАЛ", decoding: "ДЕКОДИРОВАНИЕ_СИГНАЛА...", signal_stable: "СИГНАЛ_СТАБИЛЕН",
     
-    // Новые переводы для мобилки
     mobile_warn_title: "В ДОСТУПЕ ОТКАЗАНО",
-    mobile_warn_desc: "Обнаружено неавторизованное мобильное устройство. Протоколы безопасности S.O.K.A. требуют для подключения полноформатную рабочую станцию (Desktop). Пожалуйста, переподключитесь с ПК для доступа к зашифрованным файлам."
+    mobile_warn_desc: "Обнаружено неавторизованное мобильное устройство. Протоколы безопасности S.O.K.A. требуют для подключения полноформатную рабочую станцию (Desktop). Пожалуйста, переподключитесь с ПК для доступа к зашифрованным файлам.",
+
+    net_title: "КАНАЛЫ СВЯЗИ", net_desc: "ВЫБЕРИТЕ БЕЗОПАСНЫЙ ПРОТОКОЛ ПЕРЕДАЧИ ДАННЫХ."
   },
   en: {
     scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
@@ -81,7 +82,9 @@ const DICT = {
     view_visuals: "DECRYPT_VISUAL_FEED", back_to_data: "RETURN_TO_TERMINAL", decoding: "DECODING_SIGNAL...", signal_stable: "SIGNAL_STABLE",
     
     mobile_warn_title: "ACCESS DENIED",
-    mobile_warn_desc: "Unauthorized mobile device detected. S.O.K.A. security protocols require a full-scale workstation (Desktop) for connection. Please reconnect using a PC to access encrypted databanks."
+    mobile_warn_desc: "Unauthorized mobile device detected. S.O.K.A. security protocols require a full-scale workstation (Desktop) for connection. Please reconnect using a PC to access encrypted databanks.",
+
+    net_title: "COMMUNICATION CHANNELS", net_desc: "SELECT A SECURE DATA TRANSFER PROTOCOL."
   },
   uz: {
     scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
@@ -109,7 +112,9 @@ const DICT = {
     view_visuals: "DECRYPT_VISUAL_FEED", back_to_data: "TERMINALGA_QAYTISH", decoding: "SIGNAL_DEKODLANMOQDA...", signal_stable: "SIGNAL_BARQAROR",
     
     mobile_warn_title: "KIRISH RAD ETILDI",
-    mobile_warn_desc: "Ruxsat etilmagan mobil qurilma aniqlandi. S.O.K.A. xavfsizlik protokollari ulanish uchun to'liq formatli ish stansiyasini (Desktop) talab qiladi. Shifrlangan fayllarga kirish uchun shaxsiy kompyuter orqali qayta ulaning."
+    mobile_warn_desc: "Ruxsat etilmagan mobil qurilma aniqlandi. S.O.K.A. xavfsizlik protokollari ulanish uchun to'liq formatli ish stansiyasini (Desktop) talab qiladi. Shifrlangan fayllarga kirish uchun shaxsiy kompyuter orqali qayta ulaning.",
+
+    net_title: "ALOQA KANALLARI", net_desc: "XAVFSIZ MA'LUMOT UZATISH PROTOKOLINI TANLANG."
   },
   jp: {
     scan: "セクター7_スキャン中...", match: "一致_検出:", entity: "エンティティ_クラス:", status: "ステータス:",
@@ -137,43 +142,120 @@ const DICT = {
     view_visuals: "ビジュアル復号化", back_to_data: "端末に戻る", decoding: "信号デコード中...", signal_stable: "信号安定",
     
     mobile_warn_title: "アクセス拒否",
-    mobile_warn_desc: "未承認のモバイルデバイスを検出しました。S.O.K.A.セキュリティプロトコルでは、接続にフルスケールのワークステーション（PC）が必要です。暗号化データにアクセスするには、PC環境から再接続してください。"
+    mobile_warn_desc: "未承認のモバイルデバイスを検出しました。S.O.K.A.セキュリティプロトコルでは、接続にフルスケールのワークステーション（PC）が必要です。暗号化データにアクセスするには、PC環境から再接続してください。",
+
+    net_title: "通信チャネル", net_desc: "セキュアなデータ転送プロトコルを選択してください。"
   }
 };
 
-// --- УМНЫЙ КИБЕР-КУРСОР ---
-const SmartCursor = () => {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+// --- ОПТИМИЗАЦИЯ 1: Изолированный компонент часов ---
+// Теперь перерисовываются только эти маленькие часы, а не весь UI
+const CyberClock = React.memo(() => {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <>{time.toLocaleTimeString()}</>;
+});
+
+// --- ОПТИМИЗАЦИЯ 2: Изолированный прогресс-бар видео ---
+// Считывает время напрямую с videoRef без триггера рендера в главном файле
+const MediaSyncBar = React.memo(({ videoRef, isRedAlert, t }) => {
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const updateCursor = (e) => {
-      setPos({ x: e.clientX, y: e.clientY });
-      if (e.target.closest('.clickable')) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
+    const video = videoRef?.current;
+    if (!video) return;
+    
+    const handleUpdate = () => {
+      setProgress((video.currentTime / video.duration) * 100);
+    };
+
+    video.addEventListener('timeupdate', handleUpdate);
+    return () => video.removeEventListener('timeupdate', handleUpdate);
+  }, [videoRef]);
+
+  return (
+    <div className={`mt-4 font-mono text-[10px] md:text-xs text-white/50 w-full bg-black/60 p-3 border border-white/10 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] ${isRedAlert ? 'border-red-500/50' : ''}`}>
+      <div className="flex justify-between mb-2 pointer-events-none font-mono text-[10px]">
+        <span className="flex items-center gap-2 font-mono"><Activity size={12} className={isRedAlert ? 'text-red-500' : 'text-cyan-400'}/> {t('media_sync')}</span>
+        <span className={isRedAlert ? 'text-red-500' : 'text-cyan-400'}>{Math.floor(progress)}%</span>
+      </div>
+      <div className="w-full h-1 bg-white/10 relative overflow-hidden pointer-events-none">
+        <div className={`absolute top-0 left-0 h-full transition-all duration-100 ease-linear ${isRedAlert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]'}`} style={{ width: `${progress}%` }}></div>
+      </div>
+    </div>
+  );
+});
+
+// --- УМНЫЙ КИБЕР-КУРСОР (МЕМОИЗИРОВАН) ---
+const SmartCursor = React.memo(() => {
+  const cursorCoreRef = useRef(null);
+  const cursorOuterRef = useRef(null);
+  const [isClicked, setIsClicked] = useState(false);
+
+  useEffect(() => {
+    const updateMousePosition = (e) => {
+      if (cursorCoreRef.current) {
+        cursorCoreRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+      if (cursorOuterRef.current) {
+        cursorOuterRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
       }
     };
-    window.addEventListener('mousemove', updateCursor);
-    return () => window.removeEventListener('mousemove', updateCursor);
+
+    const handleMouseDown = () => setIsClicked(true);
+    const handleMouseUp = () => setIsClicked(false);
+
+    window.addEventListener('mousemove', updateMousePosition);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', updateMousePosition);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
   }, []);
 
   return (
-    <motion.div
-      className="fixed top-0 left-0 z-[999999] pointer-events-none flex items-center justify-center hidden md:flex"
-      animate={{ x: pos.x - 16, y: pos.y - 16, scale: isHovering ? 1.5 : 1, rotate: isHovering ? 90 : 0 }}
-      transition={{ type: 'spring', stiffness: 500, damping: 28, mass: 0.5 }}
-    >
-      <div className={`w-8 h-8 border border-dashed rounded-full flex items-center justify-center transition-colors duration-300 ${isHovering ? 'border-red-500' : 'border-cyan-400'}`}>
-        <div className={`w-1 h-1 rounded-full transition-colors duration-300 ${isHovering ? 'bg-red-500' : 'bg-cyan-400'}`} />
-      </div>
-    </motion.div>
-  );
-};
+    <>
+      <style dangerouslySetInnerHTML={{__html: `* { cursor: none !important; }`}} />
 
-// --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
-const Typewriter = ({ text, speed = 20 }) => {
+      <motion.div
+        ref={cursorOuterRef}
+        className="fixed top-0 left-0 pointer-events-none z-[999999] flex items-center justify-center mix-blend-difference"
+        animate={{ scale: isClicked ? 0.7 : 1, rotate: isClicked ? 45 : 0 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        style={{ width: 0, height: 0, transition: 'none' }} 
+      >
+        <div className="absolute w-8 h-8 text-cyan-400 opacity-80">
+          <div className="absolute top-0 left-0 w-2 h-2 border-t-[2px] border-l-[2px] border-current" />
+          <div className="absolute top-0 right-0 w-2 h-2 border-t-[2px] border-r-[2px] border-current" />
+          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-[2px] border-l-[2px] border-current" />
+          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-[2px] border-r-[2px] border-current" />
+        </div>
+      </motion.div>
+
+      <motion.div
+        ref={cursorCoreRef}
+        className="fixed top-0 left-0 pointer-events-none z-[999999] flex items-center justify-center mix-blend-difference"
+        animate={{ scale: isClicked ? 1.5 : 1, opacity: isClicked ? 1 : 0.9 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+        style={{ width: 0, height: 0, transition: 'none' }}
+      >
+        <div className="relative flex items-center justify-center text-pink-500 shadow-[0_0_8px_#ec4899]">
+           <div className="w-4 h-[2px] bg-current" />
+           <div className="absolute h-4 w-[2px] bg-current" />
+        </div>
+      </motion.div>
+    </>
+  );
+});
+
+// --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ (МЕМОИЗИРОВАН) ---
+const Typewriter = React.memo(({ text, speed = 20 }) => {
   const [displayed, setDisplayed] = useState('');
   const [isDone, setIsDone] = useState(false);
 
@@ -198,10 +280,10 @@ const Typewriter = ({ text, speed = 20 }) => {
       <span className={`inline-block w-[8px] h-[14px] bg-current ml-1 align-middle ${isDone ? 'animate-pulse opacity-50' : ''}`} />
     </span>
   );
-};
+});
 
-// --- ЖИВОЙ СИСТЕМНЫЙ ЛОГ ---
-const LiveSystemLog = ({ isRedAlert }) => {
+// --- ЖИВОЙ СИСТЕМНЫЙ ЛОГ (МЕМОИЗИРОВАН) ---
+const LiveSystemLog = React.memo(({ isRedAlert }) => {
   const [logs, setLogs] = useState([]);
   useEffect(() => {
     const normalPhrases = ["PYTHON_ENV_LOADED", "DJANGO_QUERY_OPTIMIZE", "REDIS_CACHE_SYNC", "AIOGRAM_POLLING_INIT"];
@@ -222,9 +304,9 @@ const LiveSystemLog = ({ isRedAlert }) => {
       ))}
     </div>
   );
-};
+});
 
-const AudioWaveform = ({ active, isRedAlert }) => {
+const AudioWaveform = React.memo(({ active, isRedAlert }) => {
   const bars = [1, 2, 3, 4, 5];
   const colorClass = isRedAlert ? 'bg-red-500' : 'bg-cyan-400';
   return (
@@ -239,10 +321,10 @@ const AudioWaveform = ({ active, isRedAlert }) => {
       ))}
     </div>
   );
-};
+});
 
 // --- КОМПОНЕНТ ТЕРМИНАЛА ВНУТРИ ПРОЕКТА ---
-const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode, currentTime }) => {
+const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode }) => {
   const [stage, setStage] = useState('connecting'); 
   const [logs, setLogs] = useState([]);
   
@@ -274,7 +356,7 @@ const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode, curr
     }, 400);
 
     return () => clearInterval(interval);
-  }, [project.name]); 
+  }, [project.name, playSound]); 
 
   const handleViewVisuals = () => {
     setViewMode('visuals'); 
@@ -372,7 +454,7 @@ const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode, curr
                </div>
                
                <div className="absolute top-6 right-6 md:top-10 md:right-10 z-30 font-mono text-white/50 tracking-widest text-xs md:text-sm bg-black/60 px-4 py-2 border border-white/10 backdrop-blur-sm">
-                   {currentTime.toLocaleTimeString()}
+                   <CyberClock />
                </div>
 
                <div className="absolute top-8 left-8 w-16 h-16 border-t-4 border-l-4 border-white/20 z-10 hidden md:block"></div>
@@ -464,26 +546,24 @@ const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode, curr
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ ---
 const IntegratedGameUI = () => {
-  // Хук для определения мобильного устройства
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // Если ширина экрана меньше 768px, считаем это мобилкой
+      setIsMobile(window.innerWidth < 768); 
     };
-    
-    checkMobile(); // Проверяем при загрузке
-    window.addEventListener('resize', checkMobile); // Слушаем изменение окна
+    checkMobile(); 
+    window.addEventListener('resize', checkMobile); 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const [langIndex, setLangIndex] = useState(0);
   const lang = LANGS[langIndex];
-  const t = (key) => DICT[lang][key] || key;
+  // Оптимизация получения перевода
+  const t = useCallback((key) => DICT[lang][key] || key, [lang]);
 
   const [systemState, setSystemState] = useState('idle');
   const [bootProgress, setBootProgress] = useState(0);
-  const [videoProgress, setVideoProgress] = useState(0);
   const [activeTab, setActiveTab] = useState(null); 
   
   const [selectedProject, setSelectedProject] = useState(null); 
@@ -500,14 +580,8 @@ const IntegratedGameUI = () => {
   const [isRedAlert, setIsRedAlert] = useState(false);
   const videoRef = useRef(null);
 
-  const [currentTime, setCurrentTime] = useState(new Date());
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (videoLoaded || isMobile) return; // Не грузим видео на мобилке
+    if (videoLoaded || isMobile) return; 
     
     const interval = setInterval(() => {
       setPreLoadProgress(prev => {
@@ -520,7 +594,8 @@ const IntegratedGameUI = () => {
     return () => clearInterval(interval);
   }, [videoLoaded, isMobile]);
 
-  const playSound = (freq = 440, type = 'sine', duration = 0.1) => {
+  // Оптимизация звука (не пересоздаем на каждый рендер)
+  const playSound = useCallback((freq = 440, type = 'sine', duration = 0.1) => {
     if (volume === 0 || systemState !== 'ready') return;
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -535,7 +610,7 @@ const IntegratedGameUI = () => {
       oscillator.start();
       oscillator.stop(audioCtx.currentTime + duration);
     } catch (e) {}
-  };
+  }, [volume, systemState]);
 
   const handleVideoCanPlay = () => {
     setPreLoadProgress(100);
@@ -567,12 +642,6 @@ const IntegratedGameUI = () => {
       }
       setBootProgress(progress);
     }, 120);
-  };
-
-  const handleTimeUpdate = () => {
-    if (videoRef.current && videoRef.current.duration) {
-      setVideoProgress((videoRef.current.currentTime / videoRef.current.duration) * 100);
-    }
   };
 
   const handleVolumeChange = (newVolume) => {
@@ -609,57 +678,71 @@ const IntegratedGameUI = () => {
     }
   };
 
-  const getBaseTabs = () => [
-    { 
-      id: 'about', label: t('tab_about'), code: '0x00A1', icon: Fingerprint, color: 'text-cyan-400', bgColor: 'bg-cyan-400', border: 'border-cyan-400', img: imgShy, 
-      type: 'text', title: t('about_title'), content: t('about_desc') 
-    },
-    { 
-      id: 'projects', label: t('tab_projects'), code: '0x00B2', icon: ShieldAlert, color: 'text-pink-500', bgColor: 'bg-pink-500', border: 'border-pink-500', img: imgScared, 
-      type: 'projects', title: t('proj_title'),
-      items: [
-        { 
-          name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', 
-          description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'],
-          images: [manga1, manga2, manga3, manga4, manga5, manga6]
-        },
-        { 
-          name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', 
-          description: t('p2_desc'), tech: ['Python', 'Tkinter/Kivy', 'Logic'],
-          images: [imgCool]
-        },
-        { 
-          name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', 
-          description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'],
-          images: [imgScared]
-        },
-        { 
-          name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', 
-          description: t('p4_desc'), tech: ['Aiogram', 'Redis', 'Docker'],
-          images: [imgShy]
-        }
-      ]
-    },
-    { 
-      id: 'skills', label: t('tab_skills'), code: '0x00C3', icon: Cpu, color: 'text-lime-400', bgColor: 'bg-lime-400', border: 'border-lime-400', img: imgCool, 
-      type: 'skills', title: t('skill_title'),
-      categories: [
-        { name: 'BACKEND_CORE', hex: '0xBA11', items: ['Python', 'Django', 'FastAPI', 'Aiogram'] },
-        { name: 'DATA_&_INFRA', hex: '0xDA22', items: ['PostgreSQL', 'Redis', 'SQL', 'Docker', 'Git'] },
-        { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['React', 'Vite', 'Tailwind CSS'] },
-        { name: 'CREATIVE_ENG', hex: '0xCE44', items: ['Figma', 'Photoshop', 'Aseprite', 'Godot'] }
-      ]
-    },
-  ];
+  // Оптимизация массива вкладок
+  const tabs = useMemo(() => {
+    const baseTabs = [
+      { 
+        id: 'about', label: t('tab_about'), code: '0x00A1', icon: Fingerprint, color: 'text-cyan-400', bgColor: 'bg-cyan-400', border: 'border-cyan-400', img: imgShy, 
+        type: 'text', title: t('about_title'), content: t('about_desc') 
+      },
+      { 
+        id: 'projects', label: t('tab_projects'), code: '0x00B2', icon: ShieldAlert, color: 'text-pink-500', bgColor: 'bg-pink-500', border: 'border-pink-500', img: imgScared, 
+        type: 'projects', title: t('proj_title'),
+        items: [
+          { 
+            name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', 
+            description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'],
+            images: [manga1, manga2, manga3, manga4, manga5, manga6]
+          },
+          { 
+            name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', 
+            description: t('p2_desc'), tech: ['Python', 'Tkinter/Kivy', 'Logic'],
+            images: [imgCool]
+          },
+          { 
+            name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', 
+            description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'],
+            images: [imgScared]
+          },
+          { 
+            name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', 
+            description: t('p4_desc'), tech: ['Aiogram', 'Redis', 'Docker'],
+            images: [imgShy]
+          }
+        ]
+      },
+      { 
+        id: 'skills', label: t('tab_skills'), code: '0x00C3', icon: Cpu, color: 'text-lime-400', bgColor: 'bg-lime-400', border: 'border-lime-400', img: imgCool, 
+        type: 'skills', title: t('skill_title'),
+        categories: [
+          { name: 'BACKEND_CORE', hex: '0xBA11', items: ['Python', 'Django', 'FastAPI', 'Aiogram'] },
+          { name: 'DATA_&_INFRA', hex: '0xDA22', items: ['PostgreSQL', 'Redis', 'SQL', 'Docker', 'Git'] },
+          { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['React', 'Vite', 'Tailwind CSS'] },
+          { name: 'CREATIVE_ENG', hex: '0xCE44', items: ['Figma', 'Photoshop', 'Aseprite', 'Godot'] }
+        ]
+      },
+      {
+        id: 'network', label: 'UPLINK_NODE', code: '0x00D4', icon: Globe, color: 'text-yellow-400', bgColor: 'bg-yellow-500', border: 'border-yellow-400', img: tempImg2,
+        type: 'network', title: t('net_title'), content: t('net_desc'),
+        links: [
+          { name: 'TELEGRAM', url: 'https://t.me/soka8imokenp', icon: Send, color: 'text-[#0088cc]' },
+          { name: 'GITHUB', url: 'https://github.com/soka8imokenp', icon: Code, color: 'text-white' },
+          { name: 'LINKEDIN', url: 'https://www.linkedin.com/in/soka8imokenp/', icon: Briefcase, color: 'text-[#0077b5]' },
+          { name: 'GMAIL', url: 'mailto:devvekaizen@gmail.com', icon: Mail, color: 'text-[#ea4335]' }
+        ]
+      }
+    ];
 
-  const tabs = isRedAlert 
-    ? [...getBaseTabs(), { 
+    if (isRedAlert) {
+      return [...baseTabs, { 
         id: 'classified', label: t('tab_class'), code: '0xDEAD', icon: Skull, color: 'text-red-500', bgColor: 'bg-red-600', border: 'border-red-500', img: tempImg2, 
         type: 'text', title: t('class_title'), content: t('class_desc') 
-      }]
-    : getBaseTabs();
+      }];
+    }
+    return baseTabs;
+  }, [lang, isRedAlert, t]);
 
-  const activeTabData = tabs.find(t => t.id === activeTab);
+  const activeTabData = useMemo(() => tabs.find(t => t.id === activeTab), [tabs, activeTab]);
 
   // --- ЭКРАН БЛОКИРОВКИ ДЛЯ МОБИЛОК ---
   if (isMobile) {
@@ -740,7 +823,8 @@ const IntegratedGameUI = () => {
           <div className={`absolute inset-0 z-10 pointer-events-none mix-blend-overlay transition-colors duration-1000 ${isRedAlert ? 'bg-red-500/30' : 'bg-transparent'}`}></div>
 
           <video 
-            ref={videoRef} loop playsInline muted={isMuted} onTimeUpdate={handleTimeUpdate}
+            ref={videoRef} loop playsInline muted={isMuted}
+            // УДАЛИЛИ onTimeUpdate ТУТ!
             onCanPlayThrough={handleVideoCanPlay}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] z-0 ${systemState === 'ready' ? 'opacity-[0.25]' : 'opacity-0'}`}
           >
@@ -765,7 +849,7 @@ const IntegratedGameUI = () => {
                     </span>
                     <div className="flex flex-col items-end">
                       <span className="text-red-500 tracking-[0.2em] font-bold animate-pulse text-sm">● REC</span>
-                      <span className="text-white/40 tracking-[0.2em] text-xs mt-1">{currentTime.toLocaleTimeString()}</span>
+                      <span className="text-white/40 tracking-[0.2em] text-xs mt-1"><CyberClock /></span>
                     </div>
                   </div>
 
@@ -929,15 +1013,8 @@ const IntegratedGameUI = () => {
                       </div>
                     );
                   })}
-                  <div className={`mt-4 font-mono text-[10px] md:text-xs text-white/50 w-full bg-black/60 p-3 border border-white/10 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] ${isRedAlert ? 'border-red-500/50' : ''}`}>
-                    <div className="flex justify-between mb-2 pointer-events-none font-mono text-[10px]">
-                      <span className="flex items-center gap-2 font-mono"><Activity size={12} className={isRedAlert ? 'text-red-500' : 'text-cyan-400'}/> {t('media_sync')}</span>
-                      <span className={isRedAlert ? 'text-red-500' : 'text-cyan-400'}>{Math.floor(videoProgress)}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/10 relative overflow-hidden pointer-events-none">
-                      <div className={`absolute top-0 left-0 h-full transition-all duration-100 ease-linear ${isRedAlert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]'}`} style={{ width: `${videoProgress}%` }}></div>
-                    </div>
-                  </div>
+                  {/* ИЗОЛИРОВАННЫЙ ПРОГРЕСС-БАР ТУТ */}
+                  <MediaSyncBar videoRef={videoRef} isRedAlert={isRedAlert} t={t} />
                 </nav>
 
                 <div className="absolute right-[5%] bottom-[10%] w-[50%] h-[80%] z-20 flex justify-end items-center pointer-events-none font-mono text-base">
@@ -961,13 +1038,16 @@ const IntegratedGameUI = () => {
                           <div className={`absolute top-0 right-0 h-1 w-32 ${activeTabData.bgColor}`}></div>
                           <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white/20 z-10"></div>
                           <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white/20 z-10"></div>
+                          
                           <div className="relative z-10 flex-1 flex flex-col h-full">
                             <div className="text-[10px] md:text-xs text-white/40 mb-4 tracking-[0.2em] flex justify-between uppercase border-b border-white/10 pb-4">
                               <span>{t('status_decrypted')} // {activeTabData.code}</span>
                               <span className={activeTabData.id === 'classified' ? 'text-red-500 animate-pulse' : 'text-cyan-400'}>{t('access_granted')}</span>
                             </div>
+                            
                             <div className="text-base md:text-lg text-white leading-relaxed font-bold flex-1 flex flex-col">
                               <div className="mb-6 text-white/50 text-sm"><Typewriter text={activeTabData.title} speed={30} /></div>
+                              
                               {activeTabData.type === 'text' && <p className="text-white text-lg leading-loose"><Typewriter text={activeTabData.content} speed={15} /></p>}
                               
                               {activeTabData.type === 'skills' && (
@@ -1025,6 +1105,47 @@ const IntegratedGameUI = () => {
                                   ))}
                                 </div>
                               )}
+
+                              {activeTabData.type === 'network' && (
+                                <div className="mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 cyber-scroll">
+                                  <p className="text-sm text-white/70 leading-relaxed mb-4">
+                                    <Typewriter text={activeTabData.content} speed={15} />
+                                  </p>
+                                  <div className="grid grid-cols-1 gap-4">
+                                    {activeTabData.links.map((socialItem, i) => {
+                                      const IconComponent = socialItem.icon;
+                                      
+                                      return (
+                                        <motion.a
+                                          key={i}
+                                          href={socialItem.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          initial={{ opacity: 0, y: 10 }} 
+                                          animate={{ opacity: 1, y: 0 }} 
+                                          transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
+                                          onClick={() => playSound(1000, 'square', 0.1)}
+                                          onMouseEnter={() => playSound(600, 'sine', 0.02)}
+                                          className="group relative flex items-center justify-between p-5 border border-white/10 bg-black/40 hover:bg-white/5 transition-all clickable shrink-0 backdrop-blur-sm overflow-hidden"
+                                        >
+                                          <div className="absolute inset-0 w-0 bg-yellow-400/10 group-hover:w-full transition-all duration-300 ease-out z-0"></div>
+                                          <div className="relative z-10 flex items-center gap-6">
+                                            <div className={`p-2 border border-white/20 bg-black group-hover:border-yellow-400 transition-colors flex items-center justify-center`}>
+                                               <IconComponent size={24} className={`${socialItem.color} group-hover:text-yellow-400 transition-colors drop-shadow-[0_0_10px_currentColor]`} />
+                                            </div>
+                                            <span className="text-white/90 group-hover:text-white font-mono text-xl tracking-widest uppercase transition-colors">{socialItem.name}</span>
+                                          </div>
+                                          <div className="relative z-10 flex items-center gap-4">
+                                            <span className="text-xs font-mono text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity animate-pulse">CONNECT_</span>
+                                            <ChevronRight size={16} className="text-white/20 group-hover:text-yellow-400 transition-transform group-hover:translate-x-1" />
+                                          </div>
+                                        </motion.a>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
                             </div>
                           </div>
                         </div>
@@ -1067,7 +1188,6 @@ const IntegratedGameUI = () => {
                              t={t} 
                              viewMode={projectViewMode} 
                              setViewMode={setProjectViewMode} 
-                             currentTime={currentTime}
                           />
                         </div>
                       </motion.div>

@@ -1,43 +1,79 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const CustomCursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const cursorCoreRef = useRef(null);
+  const cursorOuterRef = useRef(null);
+  const [isClicked, setIsClicked] = useState(false);
 
-  // Отслеживаем координаты мыши
   useEffect(() => {
     const updateMousePosition = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      // Прямое манипулирование DOM убирает лаги от ререндеров React
+      if (cursorCoreRef.current) {
+        cursorCoreRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+      if (cursorOuterRef.current) {
+        cursorOuterRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
     };
 
+    const handleMouseDown = () => setIsClicked(true);
+    const handleMouseUp = () => setIsClicked(false);
+
+    // Вешаем слушатели
     window.addEventListener('mousemove', updateMousePosition);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
       window.removeEventListener('mousemove', updateMousePosition);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
 
   return (
     <>
-      {/* Главная точка курсора (розовая) */}
+      {/* Принудительно скрываем системный курсор */}
+      <style dangerouslySetInnerHTML={{__html: `* { cursor: none !important; }`}} />
+
+      {/* ВНЕШНИЙ КОНТУР: Кибер-рамка (Cyan) */}
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-pink-500 rounded-full pointer-events-none z-50 mix-blend-difference"
+        ref={cursorOuterRef}
+        className="fixed top-0 left-0 pointer-events-none z-40 flex items-center justify-center mix-blend-difference"
         animate={{
-          x: mousePosition.x - 8, // -8 чтобы курсор был ровно по центру круга
-          y: mousePosition.y - 8,
+          scale: isClicked ? 0.7 : 1, // При клике рамка сжимается
+          rotate: isClicked ? 45 : 0, // И эффектно поворачивается
         }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.1 }}
-      />
-      
-      {/* Отстающий контур курсора (голубой, для эффекта скорости) */}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        // Нулевая ширина и высота, чтобы координаты были ровно по центру
+        style={{ width: 0, height: 0 }} 
+      >
+        <div className="absolute w-8 h-8 text-cyan-400 opacity-80">
+          {/* 4 острых уголка */}
+          <div className="absolute top-0 left-0 w-2 h-2 border-t-[2px] border-l-[2px] border-current" />
+          <div className="absolute top-0 right-0 w-2 h-2 border-t-[2px] border-r-[2px] border-current" />
+          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-[2px] border-l-[2px] border-current" />
+          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-[2px] border-r-[2px] border-current" />
+        </div>
+      </motion.div>
+
+      {/* ВНУТРЕННЕЕ ЯДРО: Точный крестик (Pink) */}
       <motion.div
-        className="fixed top-0 left-0 w-10 h-10 border-2 border-cyan-400 rounded-full pointer-events-none z-40"
-        animate={{
-          x: mousePosition.x - 20,
-          y: mousePosition.y - 20,
+        ref={cursorCoreRef}
+        className="fixed top-0 left-0 pointer-events-none z-50 flex items-center justify-center mix-blend-difference"
+        animate={{ 
+          scale: isClicked ? 1.5 : 1, // При клике крестик увеличивается
+          opacity: isClicked ? 1 : 0.9 
         }}
-        transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.5 }}
-      />
+        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+        style={{ width: 0, height: 0 }}
+      >
+        <div className="relative flex items-center justify-center text-pink-500 shadow-[0_0_8px_#ec4899]">
+           <div className="w-4 h-[2px] bg-current" />
+           <div className="absolute h-4 w-[2px] bg-current" />
+        </div>
+      </motion.div>
     </>
   );
 };
