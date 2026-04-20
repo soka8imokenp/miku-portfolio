@@ -1,11 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Crosshair, Skull, Camera, Folder, ChevronRight, Globe } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Crosshair, Skull, Camera, Folder, ChevronRight, Globe, Monitor, Smartphone } from 'lucide-react';
 
 // --- ПОДГОТОВКА КАРТИНОК ---
 import tempImg from '../assets/hero.png'; 
 import tempImg2 from '../assets/hero2.jpg';
-import imgWelcome from '../assets/ava.jpg'; // Твой аватар
+import imgWelcome from '../assets/ava.jpg'; 
+
+// ИМПОРТ СКРИНШОТОВ ИЗ ПАПКИ ASSETS
+import manga1 from '../assets/manga_1.webp';
+import manga2 from '../assets/manga_2.webp';
+import manga3 from '../assets/manga_3.webp';
+import manga4 from '../assets/manga_4.webp';
+import manga5 from '../assets/manga_5.webp';
+import manga6 from '../assets/manga_6.webp';
 
 const imgMain = tempImg; 
 const imgShy = tempImg2; 
@@ -29,16 +37,22 @@ const DICT = {
     tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
     
     about_title: "ИДЕНТИФИКАЦИЯ: SOKA_CORE_IDENTIFIED",
-    about_desc: "Оператор: Python Backend-разработчик. Спецификация: Архитектура Telegram-экосистем и Django-серверов. Специализация: Синтез надежной серверной логики и современной цифровой эстетики. Блендинг бэкенда с концепт-артом и Pixel Art.",
+    about_desc: "ОПЕРАТОР_ПРОФИЛЬ: Разработчик Python Backend-инфраструктур. ПРОТОКОЛЫ: Проектирование масштабируемых Django-серверов и комплексных Telegram-экосистем. СИНТЕЗ_ДАННЫХ: Объединение отказоустойчивой серверной логики с современными UI/UX интерфейсами. ДОП_МОДУЛИ: Интеграция цифровой эстетики (Concept Art, Pixel Art в Aseprite), геймдев-подход и мульти-лингвальная локализация (EN/RU/UZ). ЦЕЛЬ: Разработка систем, где холодный машинный код симбиозирует с творческим видением.",
     proj_title: "РЕПОЗИТОРИИ ОБНАРУЖЕНЫ:",
     skill_title: "АКТИВНЫЕ МОДУЛИ ОПЕРАТОРА:",
     class_title: "ВНИМАНИЕ. ПРОТОКОЛ ОМЕГА.",
     class_desc: "Локализация: EN/RU/UZ. Доступ к нейросетевым агентам (LLM) получен. Система готова к интеграции ИИ и сложной автоматизации.",
     
-    p1_desc: "KAWAII_MANGA: Система управления цифровыми библиотеками. Интеграция с Python-ядром для обработки и структурирования контента.",
-    p2_desc: "BMI_APP: Аналитический модуль биометрических показателей. Высокая точность расчетов и кроссплатформенный интерфейс.",
-    p3_desc: "ENF_CORE: Экспериментальный сетевой фреймворк. Оптимизация инфраструктурных запросов и сетевого взаимодействия.",
-    p4_desc: "TG_FEEDBACK_BOT: Шифрованный канал связи на Aiogram. Система тикетов, модерация и полная анонимность данных."
+    p1_desc: "KAWAII_MANGA: Подсистема экосистемы KAWAII_UZ. Ридер графических новелл с эксклюзивной UI-архитектурой. Статус: Предрелизная интеграция, ожидание синхронизации с главным ядром.",
+    p2_desc: "BMI_ANALYZER: Биометрический сканер с интерфейсом Glassmorphism. Вектор развития: Интеграция ИИ-модуля для премиум-анализа питания и генерации персональных метаболических логов.",
+    p3_desc: "ENF_CORE: Коммерческий шлюз (E-commerce). Стек: HTMX, Django, Docker. Интегрированы модули оплаты (включая crypto). Узел полностью готов к развертыванию в боевой среде.",
+    p4_desc: "TG_FEEDBACK_BOT: WebApp-модуль связи для KAWAII_UZ (эстетика Neobrutalism). Двухконтурная архитектура: Клиент/Админ. Защищенный канал поддержки на базе Python/Django.",
+
+    view_visuals: "DECRYPT_VISUAL_FEED", back_to_data: "ВЕРНУТЬСЯ_В_ТЕРМИНАЛ", decoding: "ДЕКОДИРОВАНИЕ_СИГНАЛА...", signal_stable: "СИГНАЛ_СТАБИЛЕН",
+    
+    // Новые переводы для мобилки
+    mobile_warn_title: "В ДОСТУПЕ ОТКАЗАНО",
+    mobile_warn_desc: "Обнаружено неавторизованное мобильное устройство. Протоколы безопасности S.O.K.A. требуют для подключения полноформатную рабочую станцию (Desktop). Пожалуйста, переподключитесь с ПК для доступа к зашифрованным файлам."
   },
   en: {
     scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
@@ -53,16 +67,21 @@ const DICT = {
     tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
     
     about_title: "IDENTIFICATION: SOKA_CORE_IDENTIFIED",
-    about_desc: "Operator: Python Backend Developer. Spec: Telegram Ecosystem Architecture & Django Systems. Specialization: Blending solid backend logic with modern digital aesthetics. Core: Logic meets Creativity.",
+    about_desc: "OPERATOR_PROFILE: Python Backend Engineer. PROTOCOLS: Architecting scalable Django servers and complex Telegram bot ecosystems. SYNTHESIS: Bridging fault-tolerant backend logic with modern, intuitive UI/UX. AUX_MODULES: Deep integration of digital aesthetics (Concept & Pixel Art via Aseprite) and multi-regional localization (EN/RU/UZ). STATUS: Forging digital constructs where cold machine code achieves seamless synergy with creative vision.",
     proj_title: "REPOSITORIES DETECTED:",
     skill_title: "ACTIVE OPERATOR MODULES:",
     class_title: "WARNING. OMEGA PROTOCOL.",
     class_desc: "Localization: EN/RU/UZ. AI/LLM Agents integration access granted. System ready for neural expansion.",
     
-    p1_desc: "KAWAII_MANGA: Digital library management system. High-performance Python core for content processing.",
-    p2_desc: "BMI_APP: Biometric data analysis module. High-precision calculation engine with localized UI.",
-    p3_desc: "ENF_CORE: Experimental network framework. Infrastructure request optimization.",
-    p4_desc: "TG_FEEDBACK_BOT: Encrypted communication bridge. Aiogram-based moderation and anonymous messaging."
+    p1_desc: "KAWAII_MANGA: Subsystem of the KAWAII_UZ ecosystem. Graphic novel rendering module with an exclusive UI architecture. Status: Awaiting sync with the main core.",
+    p2_desc: "BMI_ANALYZER: Biometric scanner featuring a Glassmorphism UI. Development vector: AI integration for premium diet analysis and personalized metabolic logging.",
+    p3_desc: "ENF_CORE: Fully operational E-commerce gateway. Tech: HTMX, Django, Docker. Includes crypto and fiat payment systems. Module ready for live deployment.",
+    p4_desc: "TG_FEEDBACK_BOT: WebApp support module for KAWAII_UZ (Neobrutalism UI). Dual-access architecture (Client/Admin). Encrypted comms channel powered by Python/Django.",
+
+    view_visuals: "DECRYPT_VISUAL_FEED", back_to_data: "RETURN_TO_TERMINAL", decoding: "DECODING_SIGNAL...", signal_stable: "SIGNAL_STABLE",
+    
+    mobile_warn_title: "ACCESS DENIED",
+    mobile_warn_desc: "Unauthorized mobile device detected. S.O.K.A. security protocols require a full-scale workstation (Desktop) for connection. Please reconnect using a PC to access encrypted databanks."
   },
   uz: {
     scan: "SCANNING_SECTOR_7...", match: "MATCH_FOUND:", entity: "ENTITY_CLASS:", status: "STATUS:",
@@ -77,15 +96,20 @@ const DICT = {
     tab_about: "OPERATOR_ID", tab_projects: "DATABANK_SEC", tab_skills: "SYS_CAPACITY", tab_class: "CLASSIFIED",
     
     about_title: "IDENTIFIKATSIYA: SOKA_CORE",
-    about_desc: "Operator: Python Backend Dasturchi. Telegram botlar arxitekturasi va Django tizimlari. Kuchli backend mantiqi va zamonaviy raqamli estetika uyg'unligi.",
+    about_desc: "OPERATOR_PROFILI: Python Backend Muhandis. PROTOKOLLAR: Masshtablanuvchi Django serverlari va murakkab Telegram eko-tizimlarini loyihalash. SINTEZ: Ishonchli backend mantiqini zamonaviy UI/UX bilan birlashtirish. QO'SHIMCHA_MODULLAR: Raqamli estetika (Concept & Pixel Art) va ko'p tilli lokalizatsiya (EN/RU/UZ). MAQSAD: Qattiq mashina kodi va ijodiy yondashuv mukammal uyg'unlashgan ruxsat etilgan raqamli tizimlarni yaratish.",
     proj_title: "REPOZITORIYLAR TOPILDI:",
     skill_title: "FAOL TIZIM MODULLARI:",
     class_title: "DIQQAT. OMEGA PROTOKOLI.",
     class_desc: "Mahalliylashtirish: EN/RU/UZ. LLM agentlari integratsiyasi mavjud. Tizim sun'iy intellektga tayyor.",
-    p1_desc: "KAWAII_MANGA: Raqamli kutubxona boshqaruv tizimi. Python-yadrosi asosida ishlaydi.",
-    p2_desc: "BMI_APP: Biometrik ko'rsatkichlarni tahlil qilish moduli. Yuqori aniqlikdagi hisob-kitoblar.",
-    p3_desc: "ENF_CORE: Tarmoq infratuzilmasi uchun eksperimental freymvork.",
-    p4_desc: "TG_FEEDBACK_BOT: Maxfiy aloqa ko'prigi. Aiogram asosidagi ticket-tizimi."
+    p1_desc: "KAWAII_MANGA: KAWAII_UZ ekotizimining quyi tizimi. Eksklyuziv UI arxitekturasiga ega grafik romanlar o'qish moduli. Holati: Asosiy yadro bilan sinxronizatsiya kutilmoqda.",
+    p2_desc: "BMI_ANALYZER: Glassmorphism interfeysli biometrik skaner. Rivojlanish vektori: premium ovqatlanish tahlili va shaxsiy tavsiyalar uchun AI integratsiyasi.",
+    p3_desc: "ENF_CORE: E-commerce tijorat shlyuzi. HTMX, Django, Docker. Kripto to'lovlari o'rnatilgan. Modul jangovar ishga tushirishga tayyor.",
+    p4_desc: "TG_FEEDBACK_BOT: KAWAII_UZ uchun WebApp aloqa moduli (Neobrutalism UI). Mijoz va Admin uchun ikki tomonlama arxitektura. Python/Django asosidagi shifrlangan aloqa.",
+
+    view_visuals: "DECRYPT_VISUAL_FEED", back_to_data: "TERMINALGA_QAYTISH", decoding: "SIGNAL_DEKODLANMOQDA...", signal_stable: "SIGNAL_BARQAROR",
+    
+    mobile_warn_title: "KIRISH RAD ETILDI",
+    mobile_warn_desc: "Ruxsat etilmagan mobil qurilma aniqlandi. S.O.K.A. xavfsizlik protokollari ulanish uchun to'liq formatli ish stansiyasini (Desktop) talab qiladi. Shifrlangan fayllarga kirish uchun shaxsiy kompyuter orqali qayta ulaning."
   },
   jp: {
     scan: "セクター7_スキャン中...", match: "一致_検出:", entity: "エンティティ_クラス:", status: "ステータス:",
@@ -100,15 +124,20 @@ const DICT = {
     tab_about: "オペレーター_ID", tab_projects: "データバンク", tab_skills: "システム容量", tab_class: "機密",
     
     about_title: "認証：SOKA_コア",
-    about_desc: "オペレーター：Pythonバックエンド開発者。仕様：TelegramアーキテクチャおよびDjangoシステム。ロジックとデジタル美学の融合。",
+    about_desc: "オペレーター_プロファイル：Pythonバックエンドエンジニア。プロトコル：拡張可能なDjangoサーバーと複雑なTelegramエコシステムの構築。データ合成：耐障害性の高いバックエンド・ロジックと最新のUI/UXの融合。補助モジュール：デジタル・アート（コンセプト＆ピクセルアート）と多言語ローカライズ（EN/RU/UZ）の統合。ミッション：冷徹なマシンコードと創造的なビジョンが完璧に共鳴するシステムの開発。",
     proj_title: "検出されたリポジトリ:",
     skill_title: "アクティブ_システム_モジュール:",
     class_title: "警告。オメガ_プロトコル。",
     class_desc: "ローカライズ：EN/RU/UZ。LLMエージェントの統合準備完了。ニューラル拡張の準備が整いました。",
-    p1_desc: "KAWAII_MANGA: デジタル・ライブラリ管理システム。Pythonコア搭載。",
-    p2_desc: "BMI_APP: 生体データ分析モジュール。高精度な計算エンジン。",
-    p3_desc: "ENF_CORE: 実験的なネットワーク・フレームワーク。",
-    p4_desc: "TG_FEEDBACK_BOT: 暗号化されたフィードバック・ブリッジ。Aiogramによる匿名通信。"
+    p1_desc: "KAWAII_MANGA: KAWAII_UZエコシステムのサブシステム。独自のUIアーキテクチャを持つグラフィックノベル・リーダー。ステータス：メインコアとの同期待機中。",
+    p2_desc: "BMI_ANALYZER: Glassmorphism UIを備えた生体スキャナー。開発ベクトル：プレミアム食事分析とパーソナライズのためのAI（人工知能）統合。",
+    p3_desc: "ENF_CORE: Eコマース・ゲートウェイ。HTMX、Django、Docker実装。暗号資産決済モジュール統合済み。本番デプロイの準備完了。",
+    p4_desc: "TG_FEEDBACK_BOT: KAWAII_UZ用WebApp通信モジュール（Neobrutalism UI）。クライアント/管理者のデュアル・アーキテクチャ。Python/Django駆動の保護されたサポート・チャネル。",
+
+    view_visuals: "ビジュアル復号化", back_to_data: "端末に戻る", decoding: "信号デコード中...", signal_stable: "信号安定",
+    
+    mobile_warn_title: "アクセス拒否",
+    mobile_warn_desc: "未承認のモバイルデバイスを検出しました。S.O.K.A.セキュリティプロトコルでは、接続にフルスケールのワークステーション（PC）が必要です。暗号化データにアクセスするには、PC環境から再接続してください。"
   }
 };
 
@@ -132,7 +161,7 @@ const SmartCursor = () => {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 z-[999999] pointer-events-none flex items-center justify-center"
+      className="fixed top-0 left-0 z-[999999] pointer-events-none flex items-center justify-center hidden md:flex"
       animate={{ x: pos.x - 16, y: pos.y - 16, scale: isHovering ? 1.5 : 1, rotate: isHovering ? 90 : 0 }}
       transition={{ type: 'spring', stiffness: 500, damping: 28, mass: 0.5 }}
     >
@@ -213,9 +242,13 @@ const AudioWaveform = ({ active, isRedAlert }) => {
 };
 
 // --- КОМПОНЕНТ ТЕРМИНАЛА ВНУТРИ ПРОЕКТА ---
-const TerminalSimulation = ({ project, playSound, t }) => {
+const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode, currentTime }) => {
   const [stage, setStage] = useState('connecting'); 
   const [logs, setLogs] = useState([]);
+  
+  const [imgIndex, setImgIndex] = useState(0);
+  const [isDecoding, setIsDecoding] = useState(false);
+  const [decodeProgress, setDecodeProgress] = useState(0);
 
   useEffect(() => {
     setStage('connecting');
@@ -243,9 +276,30 @@ const TerminalSimulation = ({ project, playSound, t }) => {
     return () => clearInterval(interval);
   }, [project.name]); 
 
+  const handleViewVisuals = () => {
+    setViewMode('visuals'); 
+    setIsDecoding(true);
+    setDecodeProgress(0);
+    playSound(150, 'sawtooth', 0.8);
+
+    let p = 0;
+    const decInterval = setInterval(() => {
+      p += Math.random() * 12;
+      if (p >= 100) {
+        p = 100;
+        clearInterval(decInterval);
+        setTimeout(() => {
+          setIsDecoding(false);
+          playSound(1000, 'sine', 0.4);
+        }, 500);
+      }
+      setDecodeProgress(p);
+    }, 80);
+  };
+
   if (stage !== 'complete') {
     return (
-      <div className="text-sm text-white/70 space-y-2 relative z-20">
+      <div className="text-sm text-white/70 space-y-2 relative z-20 font-mono p-6">
         {logs.map((log, index) => (
           <div key={index}>{'>'} {log}</div>
         ))}
@@ -254,55 +308,155 @@ const TerminalSimulation = ({ project, playSound, t }) => {
     );
   }
 
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative z-20 h-full flex flex-col">
-      <div className="flex items-start gap-6 border-b border-white/10 pb-6 mb-6">
-        <div className="w-16 h-16 shrink-0 bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.2)]">
-          <Folder size={32} />
-        </div>
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-widest">{project.name}</h2>
-          <div className="text-xs text-white/40 mt-2 flex gap-4">
-            <span>{t('status')} <span className="text-lime-400">{project.status}</span></span>
-            <span>REPO: <span className="text-cyan-400">GITHUB_SOURCE</span></span>
+  if (viewMode === 'visuals') {
+    return (
+      <div className="w-full h-full flex flex-col font-mono bg-[#020202] text-white overflow-hidden relative">
+        {isDecoding ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-8 gap-6 z-50 bg-black">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,0,0.05)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+            <Crosshair size={80} className="text-red-500 animate-[spin_3s_linear_infinite]" />
+            <div className="text-2xl md:text-5xl text-red-500 tracking-[0.5em] font-bold animate-pulse text-center">OVERRIDING_CCTV_GRID...</div>
+            <div className="w-full max-w-2xl h-2 bg-white/10 relative overflow-hidden mt-8">
+               <div className="absolute top-0 left-0 h-full bg-red-500 shadow-[0_0_30px_#ef4444]" style={{ width: `${decodeProgress}%` }}></div>
+            </div>
+            <div className="text-white/50 tracking-widest text-sm md:text-base">[{Math.floor(decodeProgress)}%] BYPASSING_SECURITY_PROTOCOLS</div>
           </div>
-        </div>
-      </div>
+        ) : (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex w-full h-full flex-col md:flex-row relative z-10">
+            {/* ЛЕВАЯ КОЛОНКА - СПИСОК КАМЕР */}
+            <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-white/20 bg-[#05050a] flex flex-col z-20 shrink-0">
+               <div className="p-4 md:p-6 border-b border-white/20 flex justify-between items-center bg-white/5">
+                  <span className="text-cyan-400 font-bold tracking-[0.2em] text-xs md:text-sm flex items-center gap-3">
+                    <Camera size={18}/> CCTV_NODES
+                  </span>
+                  <span className="text-white/30 text-[10px] tracking-widest animate-pulse border border-white/20 px-2 py-1">LIVE</span>
+               </div>
+               
+               <div className="flex-1 overflow-y-auto cyber-scroll p-4 space-y-4 flex flex-row md:flex-col gap-4 md:gap-0 overflow-x-auto md:overflow-x-hidden">
+                  {project.images?.map((img, idx) => (
+                      <div 
+                        key={idx} 
+                        onClick={() => { setImgIndex(idx); playSound(600, 'square', 0.05); }} 
+                        className={`clickable shrink-0 md:shrink border transition-all duration-300 ${imgIndex === idx ? 'border-red-500 bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-white/10 opacity-50 hover:opacity-100 hover:border-white/30'} p-3 relative group w-40 md:w-full`}
+                      >
+                         <div className="flex justify-between items-center mb-3 font-mono text-[10px] text-white/70 tracking-widest">
+                             <span className={imgIndex === idx ? "text-red-500 font-bold" : ""}>CAM_0{idx + 1}</span>
+                             {imgIndex === idx && <span className="animate-pulse text-red-500">● REC</span>}
+                         </div>
+                         <div className="relative w-full h-20 md:h-28 overflow-hidden border border-white/10">
+                            <img src={img} className="w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" alt={`CAM_${idx+1}`} />
+                            <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none"></div>
+                         </div>
+                      </div>
+                  ))}
+               </div>
 
-      <div className="space-y-6 flex-1 max-h-[300px] overflow-y-auto pr-2 cyber-scroll">
-        <div>
-          <p className="text-pink-500 text-xs mb-2">{'//'} {t('exported')}</p>
-          <p className="text-white/80 leading-relaxed text-sm md:text-base">
-            <Typewriter text={project.description} speed={15} />
-          </p>
-        </div>
+               <div className="p-6 border-t border-white/20 bg-black">
+                  <button 
+                    onClick={() => { setViewMode('data'); playSound(400, 'square', 0.1); }} 
+                    className="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white transition-all tracking-[0.2em] text-xs shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_25px_rgba(239,68,68,0.5)] clickable"
+                  >
+                     [ DISCONNECT_FEED ]
+                  </button>
+               </div>
+            </div>
 
-        <div>
-          <p className="text-pink-500 text-xs mb-3">{'//'} {t('modules')}</p>
-          <div className="flex gap-2 flex-wrap">
-            {project.tech.map((tech, i) => (
-              <motion.span 
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 + (i * 0.1) }}
-                className="px-3 py-1 bg-white/5 border border-white/20 text-xs text-white/70 shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]"
-              >
-                {tech}
-              </motion.span>
-            ))}
-          </div>
-        </div>
-      </div>
+            {/* ПРАВАЯ ЧАСТЬ - ГЛАВНЫЙ ЭКРАН КАМЕРЫ */}
+            <div className="flex-1 relative bg-[#020202] flex items-center justify-center p-4 md:p-8 overflow-hidden">
+               <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.3)_50%)] bg-[length:100%_4px] z-20"></div>
+               <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] z-20"></div>
+               
+               <div className="absolute top-6 left-6 md:top-10 md:left-10 z-30 flex gap-4 items-center bg-black/60 px-4 py-2 border border-white/10 backdrop-blur-sm">
+                   <span className="text-red-500 font-bold tracking-widest text-sm md:text-lg animate-pulse">● REC</span>
+                   <span className="text-white/70 tracking-widest text-xs md:text-sm">CAM_0{imgIndex + 1} // {project.name}</span>
+               </div>
+               
+               <div className="absolute top-6 right-6 md:top-10 md:right-10 z-30 font-mono text-white/50 tracking-widest text-xs md:text-sm bg-black/60 px-4 py-2 border border-white/10 backdrop-blur-sm">
+                   {currentTime.toLocaleTimeString()}
+               </div>
 
-      <div className="mt-8 pt-6 border-t border-white/10 flex justify-end gap-4">
-        {project.url !== '#' && (
-          <a 
-            href={project.url} target="_blank" rel="noreferrer" 
-            className="px-6 py-2 bg-pink-500/10 text-pink-500 border border-pink-500 hover:bg-pink-500 hover:text-white transition-all clickable shadow-[0_0_15px_rgba(236,72,153,0.2)]"
-            onClick={() => playSound(800, 'square', 0.1)}
-          >
-            [ {t('extract')} ]
-          </a>
+               <div className="absolute top-8 left-8 w-16 h-16 border-t-4 border-l-4 border-white/20 z-10 hidden md:block"></div>
+               <div className="absolute top-8 right-8 w-16 h-16 border-t-4 border-r-4 border-white/20 z-10 hidden md:block"></div>
+               <div className="absolute bottom-8 left-8 w-16 h-16 border-b-4 border-l-4 border-white/20 z-10 hidden md:block"></div>
+               <div className="absolute bottom-8 right-8 w-16 h-16 border-b-4 border-r-4 border-white/20 z-10 hidden md:block"></div>
+
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-48 h-48 border border-white/10 rounded-full flex items-center justify-center pointer-events-none opacity-50">
+                   <div className="w-full h-[1px] bg-white/20"></div>
+                   <div className="absolute h-full w-[1px] bg-white/20"></div>
+                   <div className="absolute w-2 h-2 border border-red-500"></div>
+               </div>
+
+               {project.images && project.images.length > 0 ? (
+                  <motion.img 
+                    key={imgIndex} 
+                    initial={{ opacity: 0, filter: "blur(10px)", scale: 1.05 }}
+                    animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+                    transition={{ duration: 0.4 }}
+                    src={project.images[imgIndex]} 
+                    className="max-w-full max-h-full object-contain z-10 filter contrast-125 saturate-50 drop-shadow-[0_0_30px_rgba(255,255,255,0.05)]" 
+                    alt="Main Feed"
+                  />
+               ) : (
+                  <div className="text-white/30 text-lg tracking-[0.2em] animate-pulse z-10">NO_VISUAL_DATA_FOUND</div>
+               )}
+            </div>
+          </motion.div>
         )}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative z-20 h-full flex flex-col font-mono w-full p-6 md:p-8">
+      <div className="flex items-start gap-4 md:gap-6 border-b border-white/10 pb-4 mb-4 md:mb-6 shrink-0">
+        <div className="w-12 h-12 md:w-16 md:h-16 shrink-0 bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.2)]">
+          <Folder size={24} className="md:w-8 md:h-8" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-xl md:text-3xl font-bold text-white tracking-widest truncate">{project.name}</h2>
+          <div className="text-[10px] md:text-xs text-white/40 mt-1 md:mt-2 flex gap-4">
+            <span>{t('status')} <span className="text-cyan-400">{project.status}</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 relative w-full min-h-[300px]">
+         <div className="absolute inset-0 flex flex-col space-y-6 overflow-y-auto pr-2 cyber-scroll">
+            <div>
+              <p className="text-pink-500 text-xs mb-2">{'//'} {t('exported')}</p>
+              <p className="text-white/80 leading-relaxed text-sm md:text-base"><Typewriter text={project.description} speed={15} /></p>
+            </div>
+            <div>
+              <p className="text-pink-500 text-xs mb-3">{'//'} {t('modules')}</p>
+              <div className="flex gap-2 flex-wrap">
+                {project.tech.map((tech, i) => (
+                  <motion.span key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 + (i * 0.1) }} className="px-3 py-1 bg-white/5 border border-white/20 text-xs text-white/70 shadow-[inset_0_0_10px_rgba(255,255,255,0.05)]">
+                    {tech}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+         </div>
+      </div>
+
+      <div className="mt-4 md:mt-6 pt-4 border-t border-white/10 flex flex-wrap justify-end gap-3 shrink-0">
+         {project.images && project.images.length > 0 && (
+            <button 
+              onClick={handleViewVisuals}
+              className="px-4 py-2 bg-cyan-400/10 text-cyan-400 border border-cyan-400 hover:bg-cyan-400 hover:text-black transition-all clickable shadow-[0_0_15px_rgba(34,211,238,0.2)] text-xs md:text-sm font-bold tracking-widest"
+            >
+              [ {t('view_visuals')} ]
+            </button>
+         )}
+         {project.url !== '#' && (
+            <a 
+              href={project.url} target="_blank" rel="noreferrer" 
+              className="px-4 py-2 bg-pink-500/10 text-pink-500 border border-pink-500 hover:bg-pink-500 hover:text-white transition-all clickable shadow-[0_0_15px_rgba(236,72,153,0.2)] text-xs md:text-sm font-bold tracking-widest"
+              onClick={() => playSound(800, 'square', 0.1)}
+            >
+              [ {t('extract')} ]
+            </a>
+         )}
       </div>
     </motion.div>
   );
@@ -310,6 +464,19 @@ const TerminalSimulation = ({ project, playSound, t }) => {
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ ---
 const IntegratedGameUI = () => {
+  // Хук для определения мобильного устройства
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // Если ширина экрана меньше 768px, считаем это мобилкой
+    };
+    
+    checkMobile(); // Проверяем при загрузке
+    window.addEventListener('resize', checkMobile); // Слушаем изменение окна
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const [langIndex, setLangIndex] = useState(0);
   const lang = LANGS[langIndex];
   const t = (key) => DICT[lang][key] || key;
@@ -318,7 +485,12 @@ const IntegratedGameUI = () => {
   const [bootProgress, setBootProgress] = useState(0);
   const [videoProgress, setVideoProgress] = useState(0);
   const [activeTab, setActiveTab] = useState(null); 
+  
   const [selectedProject, setSelectedProject] = useState(null); 
+  const [projectViewMode, setProjectViewMode] = useState('data'); 
+  
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [preLoadProgress, setPreLoadProgress] = useState(0);
   
   const [volume, setVolume] = useState(0.1); 
   const [isMuted, setIsMuted] = useState(false);
@@ -333,6 +505,20 @@ const IntegratedGameUI = () => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (videoLoaded || isMobile) return; // Не грузим видео на мобилке
+    
+    const interval = setInterval(() => {
+      setPreLoadProgress(prev => {
+        if (prev >= 99) return 99;
+        const jump = Math.random() * 8; 
+        return Math.min(prev + jump, 99);
+      });
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, [videoLoaded, isMobile]);
 
   const playSound = (freq = 440, type = 'sine', duration = 0.1) => {
     if (volume === 0 || systemState !== 'ready') return;
@@ -351,9 +537,18 @@ const IntegratedGameUI = () => {
     } catch (e) {}
   };
 
+  const handleVideoCanPlay = () => {
+    setPreLoadProgress(100);
+    setTimeout(() => {
+      setVideoLoaded(true);
+      if (systemState === 'idle') playSound(600, 'square', 0.1); 
+    }, 500); 
+  };
+
   const handleStart = () => {
     if (systemState !== 'idle') return;
     setSystemState('booting');
+    playSound(400, 'square', 0.2);
     let progress = 0;
     const interval = setInterval(() => {
       progress += Math.random() * 15; 
@@ -423,22 +618,36 @@ const IntegratedGameUI = () => {
       id: 'projects', label: t('tab_projects'), code: '0x00B2', icon: ShieldAlert, color: 'text-pink-500', bgColor: 'bg-pink-500', border: 'border-pink-500', img: imgScared, 
       type: 'projects', title: t('proj_title'),
       items: [
-        { name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'] },
-        { name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', description: t('p2_desc'), tech: ['Python', 'Tkinter/Kivy', 'Logic'] },
-        { name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'] },
-        { name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', description: t('p4_desc'), tech: ['Aiogram', 'Redis', 'Docker'] }
+        { 
+          name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', 
+          description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'],
+          images: [manga1, manga2, manga3, manga4, manga5, manga6]
+        },
+        { 
+          name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', 
+          description: t('p2_desc'), tech: ['Python', 'Tkinter/Kivy', 'Logic'],
+          images: [imgCool]
+        },
+        { 
+          name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', 
+          description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'],
+          images: [imgScared]
+        },
+        { 
+          name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', 
+          description: t('p4_desc'), tech: ['Aiogram', 'Redis', 'Docker'],
+          images: [imgShy]
+        }
       ]
     },
     { 
       id: 'skills', label: t('tab_skills'), code: '0x00C3', icon: Cpu, color: 'text-lime-400', bgColor: 'bg-lime-400', border: 'border-lime-400', img: imgCool, 
       type: 'skills', title: t('skill_title'),
-      items: [
-        { name: 'Python_Backend', value: 95, alert: false }, 
-        { name: 'Django_Core', value: 90, alert: false },
-        { name: 'Aiogram_Bot_Arch', value: 95, alert: true }, 
-        { name: 'SQL_PostgreSQL', value: 85, alert: false },
-        { name: 'React_Frontend', value: 75, alert: false }, 
-        { name: 'Digital_PixelArt', value: 80, alert: false }
+      categories: [
+        { name: 'BACKEND_CORE', hex: '0xBA11', items: ['Python', 'Django', 'FastAPI', 'Aiogram'] },
+        { name: 'DATA_&_INFRA', hex: '0xDA22', items: ['PostgreSQL', 'Redis', 'SQL', 'Docker', 'Git'] },
+        { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['React', 'Vite', 'Tailwind CSS'] },
+        { name: 'CREATIVE_ENG', hex: '0xCE44', items: ['Figma', 'Photoshop', 'Aseprite', 'Godot'] }
       ]
     },
   ];
@@ -452,14 +661,71 @@ const IntegratedGameUI = () => {
 
   const activeTabData = tabs.find(t => t.id === activeTab);
 
+  // --- ЭКРАН БЛОКИРОВКИ ДЛЯ МОБИЛОК ---
+  if (isMobile) {
+    return (
+      <div className="h-screen w-full bg-[#05050a] flex flex-col items-center justify-center p-6 font-mono overflow-hidden relative selection:bg-red-500/30 text-center">
+        {/* CRT Эффекты */}
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px] z-20"></div>
+        <div className="absolute inset-0 z-10 pointer-events-none bg-red-500/5 mix-blend-overlay"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-red-500/30 animate-[scan_3s_linear_infinite] z-20 shadow-[0_0_10px_red]"></div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }} 
+          animate={{ opacity: 1, scale: 1 }} 
+          className="relative z-30 border border-red-500/50 bg-black/80 p-8 w-full max-w-sm shadow-[0_0_50px_rgba(239,68,68,0.2)]"
+        >
+          {/* Декоративные углы */}
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-red-500"></div>
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-red-500"></div>
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-red-500"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-red-500"></div>
+
+          <ShieldAlert size={64} className="mx-auto text-red-500 mb-6 animate-pulse drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+          
+          <h1 className="text-xl md:text-2xl font-bold text-red-500 tracking-widest mb-2 font-bebas uppercase">
+            {t('mobile_warn_title')}
+          </h1>
+          <div className="w-full h-[1px] bg-red-500/30 mb-6 relative">
+            <div className="absolute left-1/2 -translate-x-1/2 -top-[3px] w-8 h-[7px] bg-red-500/50"></div>
+          </div>
+
+          <p className="text-white/70 text-xs leading-relaxed mb-8">
+            <Typewriter text={t('mobile_warn_desc')} speed={20} />
+          </p>
+
+          <div className="flex justify-center items-center gap-6 text-white/30">
+             <Smartphone size={32} className="text-red-500 opacity-50 relative line-through" />
+             <span className="text-red-500 animate-pulse text-xl">→</span>
+             <Monitor size={48} className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+          </div>
+
+          <div className="mt-8 text-[10px] text-red-500/50 tracking-widest uppercase">
+            ERR_CODE: 0xDEVICE_UNSUPPORTED
+          </div>
+          
+          {/* Кнопка смены языка на мобилке */}
+          <div className="absolute -top-16 right-0">
+             <div 
+                onClick={() => setLangIndex((prev) => (prev + 1) % LANGS.length)}
+                className="flex items-center gap-2 text-white/50 border border-white/20 px-3 py-1 text-xs uppercase"
+             >
+                <Globe size={12} /> {lang}
+             </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <>
       <style dangerouslySetInnerHTML={{__html: `
-        .cyber-scroll::-webkit-scrollbar { width: 4px; }
+        .cyber-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
         .cyber-scroll::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
         .cyber-scroll::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.4); border-radius: 2px; }
         .cyber-scroll:hover::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.8); }
-        .cyber-scroll-red::-webkit-scrollbar { width: 4px; }
+        .cyber-scroll-red::-webkit-scrollbar { width: 4px; height: 4px; }
         .cyber-scroll-red::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
         .cyber-scroll-red::-webkit-scrollbar-thumb { background: rgba(239, 68, 68, 0.4); border-radius: 2px; }
         .cyber-scroll-red:hover::-webkit-scrollbar-thumb { background: rgba(239, 68, 68, 0.8); }
@@ -475,6 +741,7 @@ const IntegratedGameUI = () => {
 
           <video 
             ref={videoRef} loop playsInline muted={isMuted} onTimeUpdate={handleTimeUpdate}
+            onCanPlayThrough={handleVideoCanPlay}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] z-0 ${systemState === 'ready' ? 'opacity-[0.25]' : 'opacity-0'}`}
           >
             <source src="/background.mp4" type="video/mp4" />
@@ -485,8 +752,7 @@ const IntegratedGameUI = () => {
               <motion.div
                 key="boot-screen"
                 initial={{ opacity: 1 }} exit={{ opacity: 0, filter: "brightness(3)", scale: 1.05 }} transition={{ duration: 0.6 }}
-                className="absolute inset-0 z-50 flex flex-col items-center justify-center p-10 md:p-24 bg-black font-mono clickable cursor-pointer"
-                onClick={handleStart}
+                className="absolute inset-0 z-50 flex flex-col items-center justify-center p-10 md:p-24 bg-black font-mono"
               >
                 <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-40 brightness-100 mix-blend-screen pointer-events-none">
                   <source src="/no-signal.mp4" type="video/mp4" />
@@ -540,16 +806,35 @@ const IntegratedGameUI = () => {
                     </div>
                   </div>
 
-                  <div className="w-full mt-10 pt-6 border-t border-white/20 flex justify-center items-center">
+                  <div className="w-full mt-10 pt-6 border-t border-white/20 flex justify-center items-center h-24">
                     {systemState === 'idle' ? (
-                      <motion.div
-                        animate={{ opacity: [1, 0.7, 1] }} transition={{ repeat: Infinity, duration: 2 }}
-                        className="text-white hover:text-black hover:bg-white transition-all flex items-center gap-4 text-3xl md:text-4xl font-bold bg-white/5 px-10 py-4 border border-white cursor-pointer"
-                      >
-                        <Terminal size={36} /> [ {t('override')} ]
-                      </motion.div>
+                      videoLoaded ? (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: [1, 0.7, 1], scale: 1 }}
+                          transition={{ opacity: { repeat: Infinity, duration: 2 }, scale: { duration: 0.3 } }}
+                          className="text-white hover:text-black hover:bg-white transition-all flex items-center gap-4 text-3xl md:text-4xl font-bold bg-white/5 px-10 py-4 border border-white clickable cursor-pointer"
+                          onClick={handleStart}
+                        >
+                          <Terminal size={36} /> [ {t('override')} ]
+                        </motion.div>
+                      ) : (
+                        <div className="flex flex-col items-center w-full max-w-md gap-3">
+                          <div className="flex justify-between w-full text-white/50 font-mono text-xs tracking-widest uppercase">
+                            <span className="animate-pulse">BUFFERING_VIDEO_FEED...</span>
+                            <span className="text-cyan-400">{Math.floor(preLoadProgress)}%</span>
+                          </div>
+                          <div className="w-full h-2 bg-white/5 border border-white/10 relative overflow-hidden">
+                            <motion.div
+                              className="absolute top-0 left-0 h-full bg-cyan-400 shadow-[0_0_15px_#22d3ee]"
+                              animate={{ width: `${preLoadProgress}%` }}
+                              transition={{ ease: "linear", duration: 0.2 }}
+                            />
+                          </div>
+                        </div>
+                      )
                     ) : (
-                      <div className="text-xl md:text-2xl font-bold text-white flex flex-col gap-4 bg-white/5 p-4 border border-white/20 w-full">
+                      <div className="text-xl md:text-2xl font-bold text-white flex flex-col gap-4 bg-white/5 p-4 border border-white/20 w-full max-w-md">
                         <span className="text-sm font-mono tracking-wider text-white/50">{t('decrypting')}</span>
                         <span className="text-white tracking-tighter overflow-hidden text-lg">
                           [{'#'.repeat(Math.floor((bootProgress / 100) * 20))}{'-'.repeat(20 - Math.floor((bootProgress / 100) * 20))}] {Math.floor(bootProgress)}%
@@ -577,6 +862,53 @@ const IntegratedGameUI = () => {
                   </div>
                   <div className="flex gap-8 items-center clickable cursor-pointer hover:text-white transition-colors font-mono" onClick={handleIpClick}>
                     <span className={isRedAlert ? 'text-red-500 font-bold animate-pulse font-mono' : 'font-mono'}>192.168.0.27_ROOT</span>
+                  </div>
+                </div>
+
+                <div className="absolute top-24 left-[5%] z-50 flex flex-row items-center gap-4">
+                  <div 
+                    onClick={() => { setLangIndex((prev) => (prev + 1) % LANGS.length); playSound(1000, 'square', 0.05); }}
+                    className={`clickable flex items-center justify-center gap-2 h-14 px-4 bg-black/90 border transition-all z-20 ${isRedAlert ? 'border-red-500/50 hover:border-red-500 hover:bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 hover:bg-white/10 text-white/70 hover:text-white'} backdrop-blur-md font-mono text-[10px] md:text-xs tracking-widest uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
+                  >
+                    <Globe size={16} className={isRedAlert ? "text-red-500" : "text-cyan-400"} />
+                    [ {lang} ]
+                  </div>
+
+                  <div className="flex flex-row items-center relative">
+                    <div 
+                      onClick={() => setIsVolumeExpanded(!isVolumeExpanded)}
+                      className={`clickable flex items-center justify-center w-14 h-14 bg-black/90 border backdrop-blur-md transition-all z-20 ${isVolumeExpanded ? 'border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'border-white/60 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:bg-white/10 hover:border-white'}`}
+                    >
+                      {isMuted || volume === 0 
+                        ? <VolumeX size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white opacity-60'} />
+                        : <Volume2 size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white'} />
+                      }
+                    </div>
+                    <AnimatePresence>
+                      {isVolumeExpanded && (
+                        <motion.div initial={{ opacity: 0, width: 0, x: -20 }} animate={{ opacity: 1, width: 'auto', x: 0 }} exit={{ opacity: 0, width: 0, x: -20 }} className="overflow-hidden flex z-10">
+                          <div className="flex h-14 bg-black/80 border-y border-r border-white/20 backdrop-blur-md items-center px-4 pl-6 gap-6 w-max whitespace-nowrap">
+                            <div onClick={toggleMute} className={`clickable flex items-center gap-2 px-3 py-1.5 border transition-all ${isMuted ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 text-white/70 hover:text-white'}`}>
+                              {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                              <span className="font-mono text-[10px] font-bold tracking-widest">{isMuted || volume === 0 ? t('unmute') : t('mute')}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <AudioWaveform active={!isMuted && volume > 0} isRedAlert={isRedAlert} />
+                              <span className={`font-mono text-[10px] w-6 font-bold ${isMuted || volume === 0 ? 'text-red-500' : 'text-white'}`}>{isMuted ? '0%' : `${Math.round(volume * 100)}%`}</span>
+                            </div>
+                            <div className="flex gap-[4px] items-center">
+                              {Array.from({ length: 10 }).map((_, i) => {
+                                const barValue = (i + 1) / 10;
+                                const isActive = !isMuted && volume >= barValue;
+                                let colorClass = 'bg-transparent border-white/20 hover:bg-white/20';
+                                if (isActive) colorClass = isRedAlert ? 'bg-red-500 border-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 border-cyan-400 shadow-[0_0_10px_#22d3ee]';
+                                return <div key={i} onClick={(e) => { e.stopPropagation(); handleVolumeChange(barValue); }} className={`clickable h-6 w-3 transform -skew-x-12 transition-all duration-150 border ${colorClass}`} />;
+                              })}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
 
@@ -637,31 +969,49 @@ const IntegratedGameUI = () => {
                             <div className="text-base md:text-lg text-white leading-relaxed font-bold flex-1 flex flex-col">
                               <div className="mb-6 text-white/50 text-sm"><Typewriter text={activeTabData.title} speed={30} /></div>
                               {activeTabData.type === 'text' && <p className="text-white text-lg leading-loose"><Typewriter text={activeTabData.content} speed={15} /></p>}
+                              
                               {activeTabData.type === 'skills' && (
                                 <div className={`mt-4 flex flex-col gap-6 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
-                                  {activeTabData.items.map((skill, i) => (
-                                    <div key={i} className="flex flex-col gap-2 w-full shrink-0">
-                                      <div className="flex justify-between text-xs font-mono text-white/80">
-                                        <span>{skill.name}</span>
-                                        <span className={skill.alert ? "text-red-500 animate-pulse" : "text-lime-400"}>{skill.value}% {skill.alert && '[OVERLOAD]'}</span>
+                                  {activeTabData.categories.map((cat, i) => (
+                                    <motion.div 
+                                      key={i} 
+                                      initial={{ opacity: 0, x: -20 }} 
+                                      animate={{ opacity: 1, x: 0 }} 
+                                      transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
+                                      className="flex flex-col gap-3 shrink-0"
+                                    >
+                                      <div className="flex items-center gap-2 border-b border-white/10 pb-1">
+                                        <span className={`text-[10px] font-mono ${isRedAlert ? 'text-red-500' : 'text-lime-400'}`}>[{cat.hex}]</span>
+                                        <span className="text-sm font-bold text-white tracking-widest">{cat.name}</span>
                                       </div>
-                                      <div className="w-full h-2 bg-white/10 relative overflow-hidden">
-                                        <motion.div
-                                          initial={{ width: 0 }} animate={{ width: `${skill.value}%` }} transition={{ duration: 1, delay: 0.2 + (i * 0.1), ease: "easeOut" }}
-                                          className={`absolute top-0 left-0 h-full ${skill.alert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-lime-400 shadow-[0_0_10px_#a3e635]'}`}
-                                        />
+                                      
+                                      <div className="grid grid-cols-2 gap-2">
+                                        {cat.items.map((item, j) => (
+                                          <div 
+                                            key={j} 
+                                            className={`flex items-center justify-between border border-white/10 bg-black/40 p-2 hover:border-white/30 transition-colors group ${isRedAlert ? 'hover:bg-red-500/10' : 'hover:bg-lime-400/10'}`}
+                                            onMouseEnter={() => playSound(800, 'sine', 0.02)}
+                                          >
+                                            <span className="text-xs text-white/70 group-hover:text-white font-mono transition-colors truncate pr-2">{item}</span>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                              <span className={`w-1.5 h-1.5 rounded-full ${isRedAlert ? 'bg-red-500 animate-pulse shadow-[0_0_5px_#ef4444]' : 'bg-lime-400 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_5px_#a3e635]'}`}></span>
+                                              <span className="text-[9px] text-white/30 hidden md:inline-block tracking-widest font-mono group-hover:text-white/50 transition-colors">SYNC</span>
+                                            </div>
+                                          </div>
+                                        ))}
                                       </div>
-                                    </div>
+                                    </motion.div>
                                   ))}
                                 </div>
                               )}
+
                               {activeTabData.type === 'projects' && (
                                 <div className={`mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
                                   {activeTabData.items.map((proj, i) => (
                                     <motion.div
                                       key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
                                       className="group flex items-center justify-between p-4 border border-white/10 bg-black/40 hover:border-pink-500 hover:bg-pink-500/20 cursor-pointer transition-all clickable shrink-0 backdrop-blur-sm"
-                                      onClick={() => { playSound(1000, 'square', 0.05); setSelectedProject(proj); }}
+                                      onClick={() => { playSound(1000, 'square', 0.05); setProjectViewMode('data'); setSelectedProject(proj); }}
                                     >
                                       <div className="flex items-center gap-4">
                                         <Folder size={20} className="text-white/30 group-hover:text-pink-500 transition-colors" />
@@ -683,67 +1033,42 @@ const IntegratedGameUI = () => {
                   </AnimatePresence>
                 </div>
 
-                <div className="fixed bottom-10 right-10 z-50 flex flex-row-reverse items-center gap-4">
-                  <div className="flex flex-row-reverse items-center relative">
-                    <div 
-                      onClick={() => setIsVolumeExpanded(!isVolumeExpanded)}
-                      className={`clickable flex items-center justify-center w-14 h-14 bg-black/90 border backdrop-blur-md transition-all z-20 ${isVolumeExpanded ? 'border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'border-white/60 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:bg-white/10 hover:border-white'}`}
-                    >
-                      {isMuted || volume === 0 
-                        ? <VolumeX size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white opacity-60'} />
-                        : <Volume2 size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white'} />
-                      }
-                    </div>
-                    <AnimatePresence>
-                      {isVolumeExpanded && (
-                        <motion.div initial={{ opacity: 0, width: 0, x: 20 }} animate={{ opacity: 1, width: 'auto', x: 0 }} exit={{ opacity: 0, width: 0, x: 20 }} className="overflow-hidden flex z-10">
-                          <div className="flex h-14 bg-black/80 border-y border-l border-white/20 backdrop-blur-md items-center px-4 pr-6 gap-6 w-max whitespace-nowrap">
-                            <div onClick={toggleMute} className={`clickable flex items-center gap-2 px-3 py-1.5 border transition-all ${isMuted ? 'border-red-500 bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 text-white/70 hover:text-white'}`}>
-                              {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                              <span className="font-mono text-[10px] font-bold tracking-widest">{isMuted || volume === 0 ? t('unmute') : t('mute')}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <AudioWaveform active={!isMuted && volume > 0} isRedAlert={isRedAlert} />
-                              <span className={`font-mono text-[10px] w-6 font-bold ${isMuted || volume === 0 ? 'text-red-500' : 'text-white'}`}>{isMuted ? '0%' : `${Math.round(volume * 100)}%`}</span>
-                            </div>
-                            <div className="flex gap-[4px] items-center">
-                              {Array.from({ length: 10 }).map((_, i) => {
-                                const barValue = (i + 1) / 10;
-                                const isActive = !isMuted && volume >= barValue;
-                                let colorClass = 'bg-transparent border-white/20 hover:bg-white/20';
-                                if (isActive) colorClass = isRedAlert ? 'bg-red-500 border-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 border-cyan-400 shadow-[0_0_10px_#22d3ee]';
-                                return <div key={i} onClick={(e) => { e.stopPropagation(); handleVolumeChange(barValue); }} className={`clickable h-6 w-3 transform -skew-x-12 transition-all duration-150 border ${colorClass}`} />;
-                              })}
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  <div 
-                    onClick={() => { setLangIndex((prev) => (prev + 1) % LANGS.length); playSound(1000, 'square', 0.05); }}
-                    className={`clickable flex items-center justify-center gap-2 h-14 px-4 bg-black/90 border transition-all z-20 ${isRedAlert ? 'border-red-500/50 hover:border-red-500 hover:bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 hover:bg-white/10 text-white/70 hover:text-white'} backdrop-blur-md font-mono text-[10px] md:text-xs tracking-widest uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
-                  >
-                    <Globe size={16} className={isRedAlert ? "text-red-500" : "text-cyan-400"} />
-                    [ {lang} ]
-                  </div>
-                </div>
-
                 <AnimatePresence>
                   {selectedProject && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto" onClick={() => setSelectedProject(null)}>
-                      <motion.div onClick={(e) => e.stopPropagation()} initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="relative w-full max-w-2xl bg-black border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.15)] font-mono flex flex-col overflow-hidden">
-                        <div className="flex justify-between items-center bg-white/5 border-b border-white/10 px-4 py-3 relative z-20">
-                          <div className="flex items-center gap-3">
-                            <Terminal size={16} className="text-pink-500" />
-                            <span className="text-xs text-white/50 tracking-widest">{t('secure')} // {selectedProject.name}</span>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-sm pointer-events-auto" onClick={() => { setSelectedProject(null); setProjectViewMode('data'); }}>
+                      <motion.div 
+                        onClick={(e) => e.stopPropagation()} 
+                        initial={{ scale: 0.95, opacity: 0 }} 
+                        animate={{ 
+                          scale: 1, opacity: 1,
+                          width: projectViewMode === 'visuals' ? '95vw' : '100%',
+                          height: projectViewMode === 'visuals' ? '90vh' : 'auto',
+                          maxWidth: projectViewMode === 'visuals' ? '1600px' : '42rem' 
+                        }} 
+                        exit={{ scale: 0.95, opacity: 0 }} 
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative bg-black border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.15)] font-mono flex flex-col overflow-hidden"
+                      >
+                        {projectViewMode === 'data' && (
+                          <div className="flex justify-between items-center bg-white/5 border-b border-white/10 px-4 py-3 relative z-20">
+                            <div className="flex items-center gap-3">
+                              <Terminal size={16} className="text-pink-500" />
+                              <span className="text-xs text-white/50 tracking-widest">{t('secure')} // {selectedProject.name}</span>
+                            </div>
+                            <button onClick={() => { setSelectedProject(null); setProjectViewMode('data'); }} className="text-white/40 hover:text-red-500 transition-colors clickable text-xs tracking-widest">[ {t('disconnect')} ]</button>
                           </div>
-                          <button onClick={() => setSelectedProject(null)} className="text-white/40 hover:text-red-500 transition-colors clickable text-xs tracking-widest">[ {t('disconnect')} ]</button>
-                        </div>
-                        <div className="p-6 md:p-8 min-h-[350px] relative">
-                          <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none z-10 opacity-30"></div>
-                          <TerminalSimulation project={selectedProject} playSound={playSound} t={t} />
+                        )}
+                        
+                        <div className={`relative flex flex-col ${projectViewMode === 'data' ? 'flex-1 min-h-[400px]' : 'w-full h-full flex-1'}`}>
+                          {projectViewMode === 'data' && <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none z-10 opacity-30"></div>}
+                          <TerminalSimulation 
+                             project={selectedProject} 
+                             playSound={playSound} 
+                             t={t} 
+                             viewMode={projectViewMode} 
+                             setViewMode={setProjectViewMode} 
+                             currentTime={currentTime}
+                          />
                         </div>
                       </motion.div>
                     </motion.div>
