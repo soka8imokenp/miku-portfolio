@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Crosshair, Skull, Camera, Folder, ChevronRight, Globe, Monitor, Smartphone, Share2, Send, Code, Briefcase, Mail } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Volume2, VolumeX, Fingerprint, Activity, Crosshair, Skull, Camera, Folder, ChevronRight, Globe, Monitor, Smartphone, Send, Code, Briefcase, Mail } from 'lucide-react';
 
 // --- ПОДГОТОВКА КАРТИНОК ---
 import tempImg from '../assets/hero.png'; 
@@ -14,6 +14,27 @@ import manga3 from '../assets/manga_3.webp';
 import manga4 from '../assets/manga_4.webp';
 import manga5 from '../assets/manga_5.webp';
 import manga6 from '../assets/manga_6.webp';
+
+import feed1 from '../assets/feedback_1.webp';
+import feed2 from '../assets/feedback_2.webp';
+import feed3 from '../assets/feedback_3.webp';
+import feed4 from '../assets/feedback_4.webp';
+import feed5 from '../assets/feedback_5.webp';
+import feed6 from '../assets/feedback_6.webp';
+import feed7 from '../assets/feedback_7.webp';
+import feed8 from '../assets/feedback_8.webp';
+import feed9 from '../assets/feedback_9.webp';
+
+import bmi1 from '../assets/bmi1.webp';
+import bmi2 from '../assets/bmi2.webp';
+import bmi3 from '../assets/bmi3.webp';
+import bmi4 from '../assets/bmi4.webp';
+import bmi5 from '../assets/bmi5.webp';
+import bmi6 from '../assets/bmi6.webp';
+import bmi7 from '../assets/bmi7.webp';
+import bmi8 from '../assets/bmi8.webp';
+import bmi9 from '../assets/bmi9.webp';
+
 
 const imgMain = tempImg; 
 const imgShy = tempImg2; 
@@ -148,8 +169,127 @@ const DICT = {
   }
 };
 
+// ==========================================
+// НЕРУШИМЫЙ VANILLA JS КУРСОР (ТОЧНЫЙ СНАЙПЕРСКИЙ РЕЖИМ)
+// ==========================================
+const VanillaCyberCursor = () => {
+  const outerRef = useRef(null);
+  const innerRef = useRef(null);
+  const requestRef = useRef(null);
+  const mouse = useRef({ x: 0, y: 0 });
+  const previousMouse = useRef({ x: 0, y: 0 });
+  const hasMoved = useRef(false);
+
+  useEffect(() => {
+    // Отключаем на мобилках
+    if (window.innerWidth < 768) return;
+
+    const onMouseMove = (e) => {
+      mouse.current = { x: e.clientX, y: e.clientY };
+      if (!hasMoved.current) {
+        hasMoved.current = true;
+        if (outerRef.current) outerRef.current.style.opacity = 1;
+        if (innerRef.current) innerRef.current.style.opacity = 1;
+      }
+    };
+
+    const onMouseDown = () => {
+      if (outerRef.current) outerRef.current.classList.add('cursor-clicked');
+      if (innerRef.current) innerRef.current.classList.add('cursor-inner-clicked');
+    };
+
+    const onMouseUp = () => {
+      if (outerRef.current) outerRef.current.classList.remove('cursor-clicked');
+      if (innerRef.current) innerRef.current.classList.remove('cursor-inner-clicked');
+    };
+
+    const onMouseOver = (e) => {
+      if (e.target.closest('button, a, .clickable')) {
+        if (outerRef.current) outerRef.current.classList.add('cursor-hover');
+        if (innerRef.current) innerRef.current.classList.add('cursor-inner-hover');
+      } else {
+        if (outerRef.current) outerRef.current.classList.remove('cursor-hover');
+        if (innerRef.current) innerRef.current.classList.remove('cursor-inner-hover');
+      }
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mouseover', onMouseOver);
+
+    const updateCursor = () => {
+      // Центральная точка следует за мышью мгновенно (для идеальной точности)
+      if (innerRef.current && hasMoved.current) {
+        innerRef.current.style.transform = `translate3d(${mouse.current.x}px, ${mouse.current.y}px, 0)`;
+      }
+
+      // Кольцо слегка отстает (физика "резинки")
+      previousMouse.current.x += (mouse.current.x - previousMouse.current.x) * 0.25;
+      previousMouse.current.y += (mouse.current.y - previousMouse.current.y) * 0.25;
+
+      if (outerRef.current && hasMoved.current) {
+        outerRef.current.style.transform = `translate3d(${previousMouse.current.x}px, ${previousMouse.current.y}px, 0)`;
+      }
+
+      requestRef.current = requestAnimationFrame(updateCursor);
+    };
+
+    requestRef.current = requestAnimationFrame(updateCursor);
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mouseover', onMouseOver);
+      cancelAnimationFrame(requestRef.current);
+    };
+  }, []);
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{__html: `
+        * { cursor: none !important; }
+        
+        /* Внешнее кольцо в обычном состоянии */
+        .cyber-cursor-outer {
+          position: fixed; top: -15px; left: -15px; width: 30px; height: 30px;
+          border: 1px solid rgba(34, 211, 238, 0.6); border-radius: 50%; opacity: 0;
+          pointer-events: none; z-index: 9999999; mix-blend-mode: screen;
+          transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, margin 0.2s ease, opacity 0.3s;
+        }
+
+        /* Центральная точка (мушка) - всегда видна */
+        .cyber-cursor-inner {
+          position: fixed; top: -3px; left: -3px; width: 6px; height: 6px;
+          background-color: #22d3ee; border-radius: 50%; opacity: 0;
+          pointer-events: none; z-index: 9999999; box-shadow: 0 0 8px #22d3ee;
+          mix-blend-mode: screen; transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* НАВЕДЕНИЕ (Снайперский фокус - кольцо сужается вокруг точки) */
+        .cyber-cursor-outer.cursor-hover {
+          width: 16px; height: 16px; border-color: #ec4899;
+          margin-top: 7px; margin-left: 7px; border-width: 1.5px;
+        }
+        .cyber-cursor-inner.cursor-inner-hover { 
+          background-color: #ec4899; box-shadow: 0 0 10px #ec4899; 
+        }
+
+        /* КЛИК */
+        .cyber-cursor-outer.cursor-clicked { 
+          width: 12px; height: 12px; margin-top: 9px; margin-left: 9px; border-width: 2px; 
+        }
+        .cyber-cursor-inner.cursor-inner-clicked { transform: scale(0.5); }
+      `}} />
+      <div ref={outerRef} className="cyber-cursor-outer" />
+      <div ref={innerRef} className="cyber-cursor-inner" />
+    </>
+  );
+};
+// ==========================================
+
 // --- ОПТИМИЗАЦИЯ 1: Изолированный компонент часов ---
-// Теперь перерисовываются только эти маленькие часы, а не весь UI
 const CyberClock = React.memo(() => {
   const [time, setTime] = useState(new Date());
   useEffect(() => {
@@ -160,7 +300,6 @@ const CyberClock = React.memo(() => {
 });
 
 // --- ОПТИМИЗАЦИЯ 2: Изолированный прогресс-бар видео ---
-// Считывает время напрямую с videoRef без триггера рендера в главном файле
 const MediaSyncBar = React.memo(({ videoRef, isRedAlert, t }) => {
   const [progress, setProgress] = useState(0);
 
@@ -186,71 +325,6 @@ const MediaSyncBar = React.memo(({ videoRef, isRedAlert, t }) => {
         <div className={`absolute top-0 left-0 h-full transition-all duration-100 ease-linear ${isRedAlert ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]'}`} style={{ width: `${progress}%` }}></div>
       </div>
     </div>
-  );
-});
-
-// --- УМНЫЙ КИБЕР-КУРСОР (МЕМОИЗИРОВАН) ---
-const SmartCursor = React.memo(() => {
-  const cursorCoreRef = useRef(null);
-  const cursorOuterRef = useRef(null);
-  const [isClicked, setIsClicked] = useState(false);
-
-  useEffect(() => {
-    const updateMousePosition = (e) => {
-      if (cursorCoreRef.current) {
-        cursorCoreRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-      }
-      if (cursorOuterRef.current) {
-        cursorOuterRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-      }
-    };
-
-    const handleMouseDown = () => setIsClicked(true);
-    const handleMouseUp = () => setIsClicked(false);
-
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, []);
-
-  return (
-    <>
-      <style dangerouslySetInnerHTML={{__html: `* { cursor: none !important; }`}} />
-
-      <motion.div
-        ref={cursorOuterRef}
-        className="fixed top-0 left-0 pointer-events-none z-[999999] flex items-center justify-center mix-blend-difference"
-        animate={{ scale: isClicked ? 0.7 : 1, rotate: isClicked ? 45 : 0 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-        style={{ width: 0, height: 0, transition: 'none' }} 
-      >
-        <div className="absolute w-8 h-8 text-cyan-400 opacity-80">
-          <div className="absolute top-0 left-0 w-2 h-2 border-t-[2px] border-l-[2px] border-current" />
-          <div className="absolute top-0 right-0 w-2 h-2 border-t-[2px] border-r-[2px] border-current" />
-          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-[2px] border-l-[2px] border-current" />
-          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-[2px] border-r-[2px] border-current" />
-        </div>
-      </motion.div>
-
-      <motion.div
-        ref={cursorCoreRef}
-        className="fixed top-0 left-0 pointer-events-none z-[999999] flex items-center justify-center mix-blend-difference"
-        animate={{ scale: isClicked ? 1.5 : 1, opacity: isClicked ? 1 : 0.9 }}
-        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-        style={{ width: 0, height: 0, transition: 'none' }}
-      >
-        <div className="relative flex items-center justify-center text-pink-500 shadow-[0_0_8px_#ec4899]">
-           <div className="w-4 h-[2px] bg-current" />
-           <div className="absolute h-4 w-[2px] bg-current" />
-        </div>
-      </motion.div>
-    </>
   );
 });
 
@@ -405,7 +479,6 @@ const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode }) =>
           </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex w-full h-full flex-col md:flex-row relative z-10">
-            {/* ЛЕВАЯ КОЛОНКА - СПИСОК КАМЕР */}
             <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-white/20 bg-[#05050a] flex flex-col z-20 shrink-0">
                <div className="p-4 md:p-6 border-b border-white/20 flex justify-between items-center bg-white/5">
                   <span className="text-cyan-400 font-bold tracking-[0.2em] text-xs md:text-sm flex items-center gap-3">
@@ -443,7 +516,6 @@ const TerminalSimulation = ({ project, playSound, t, viewMode, setViewMode }) =>
                </div>
             </div>
 
-            {/* ПРАВАЯ ЧАСТЬ - ГЛАВНЫЙ ЭКРАН КАМЕРЫ */}
             <div className="flex-1 relative bg-[#020202] flex items-center justify-center p-4 md:p-8 overflow-hidden">
                <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.3)_50%)] bg-[length:100%_4px] z-20"></div>
                <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] z-20"></div>
@@ -549,9 +621,7 @@ const IntegratedGameUI = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); 
-    };
+    const checkMobile = () => setIsMobile(window.innerWidth < 768); 
     checkMobile(); 
     window.addEventListener('resize', checkMobile); 
     return () => window.removeEventListener('resize', checkMobile);
@@ -559,7 +629,6 @@ const IntegratedGameUI = () => {
 
   const [langIndex, setLangIndex] = useState(0);
   const lang = LANGS[langIndex];
-  // Оптимизация получения перевода
   const t = useCallback((key) => DICT[lang][key] || key, [lang]);
 
   const [systemState, setSystemState] = useState('idle');
@@ -579,37 +648,43 @@ const IntegratedGameUI = () => {
   const [ipClicks, setIpClicks] = useState(0);
   const [isRedAlert, setIsRedAlert] = useState(false);
   const videoRef = useRef(null);
+  const audioCtxRef = useRef(null);
 
   useEffect(() => {
     if (videoLoaded || isMobile) return; 
-    
     const interval = setInterval(() => {
       setPreLoadProgress(prev => {
         if (prev >= 99) return 99;
-        const jump = Math.random() * 8; 
-        return Math.min(prev + jump, 99);
+        return Math.min(prev + Math.random() * 8, 99);
       });
     }, 250);
-
     return () => clearInterval(interval);
   }, [videoLoaded, isMobile]);
 
-  // Оптимизация звука (не пересоздаем на каждый рендер)
   const playSound = useCallback((freq = 440, type = 'sine', duration = 0.1) => {
     if (volume === 0 || systemState !== 'ready') return;
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const audioCtx = audioCtxRef.current;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
+      
       oscillator.type = type;
       oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
       gainNode.gain.setValueAtTime(volume * 0.1, audioCtx.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
       oscillator.start();
       oscillator.stop(audioCtx.currentTime + duration);
-    } catch (e) {}
+    } catch (e) {
+      console.error("Audio block error:", e);
+    }
   }, [volume, systemState]);
 
   const handleVideoCanPlay = () => {
@@ -678,52 +753,26 @@ const IntegratedGameUI = () => {
     }
   };
 
-  // Оптимизация массива вкладок
   const tabs = useMemo(() => {
     const baseTabs = [
-      { 
-        id: 'about', label: t('tab_about'), code: '0x00A1', icon: Fingerprint, color: 'text-cyan-400', bgColor: 'bg-cyan-400', border: 'border-cyan-400', img: imgShy, 
-        type: 'text', title: t('about_title'), content: t('about_desc') 
-      },
-      { 
-        id: 'projects', label: t('tab_projects'), code: '0x00B2', icon: ShieldAlert, color: 'text-pink-500', bgColor: 'bg-pink-500', border: 'border-pink-500', img: imgScared, 
-        type: 'projects', title: t('proj_title'),
+      { id: 'about', label: t('tab_about'), code: '0x00A1', icon: Fingerprint, color: 'text-cyan-400', bgColor: 'bg-cyan-400', border: 'border-cyan-400', img: imgShy, type: 'text', title: t('about_title'), content: t('about_desc') },
+      { id: 'projects', label: t('tab_projects'), code: '0x00B2', icon: ShieldAlert, color: 'text-pink-500', bgColor: 'bg-pink-500', border: 'border-pink-500', img: imgScared, type: 'projects', title: t('proj_title'),
         items: [
-          { 
-            name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', 
-            description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'],
-            images: [manga1, manga2, manga3, manga4, manga5, manga6]
-          },
-          { 
-            name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', 
-            description: t('p2_desc'), tech: ['Python', 'Tkinter/Kivy', 'Logic'],
-            images: [imgCool]
-          },
-          { 
-            name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', 
-            description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'],
-            images: [imgScared]
-          },
-          { 
-            name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', 
-            description: t('p4_desc'), tech: ['Aiogram', 'Redis', 'Docker'],
-            images: [imgShy]
-          }
+          { name: 'KAWAII_MANGA', status: 'STABLE', url: 'https://github.com/soka8imokenp/kawaii_manga', description: t('p1_desc'), tech: ['Python', 'Django', 'PostgreSQL'], images: [manga1, manga2, manga3, manga4, manga5, manga6] },
+          { name: 'BMI_ANALYZER', status: 'ONLINE', url: 'https://github.com/soka8imokenp/BMI_app', description: t('p2_desc'), tech: ['Python', 'Tailwaind', 'Logic'], images: [bmi1, bmi2, bmi3, bmi4, bmi5,bmi6, bmi7, bmi8, bmi9] },
+          { name: 'ENF_CORE', status: 'STABLE', url: 'https://github.com/soka8imokenp/enf', description: t('p3_desc'), tech: ['Python', 'Network', 'Infrastructure'], images: [imgScared] },
+          { name: 'TG_FEEDBACK_BOT', status: 'ONLINE', url: 'https://github.com/soka8imokenp/tg-feedback-bot', description: t('p4_desc'), tech: ['Aiogram', 'HTMX', 'Django'], images: [feed1, feed2, feed3, feed4, feed5, feed6, feed7, feed8, feed9] }
         ]
       },
-      { 
-        id: 'skills', label: t('tab_skills'), code: '0x00C3', icon: Cpu, color: 'text-lime-400', bgColor: 'bg-lime-400', border: 'border-lime-400', img: imgCool, 
-        type: 'skills', title: t('skill_title'),
+      { id: 'skills', label: t('tab_skills'), code: '0x00C3', icon: Cpu, color: 'text-lime-400', bgColor: 'bg-lime-400', border: 'border-lime-400', img: imgCool, type: 'skills', title: t('skill_title'),
         categories: [
           { name: 'BACKEND_CORE', hex: '0xBA11', items: ['Python', 'Django', 'FastAPI', 'Aiogram'] },
           { name: 'DATA_&_INFRA', hex: '0xDA22', items: ['PostgreSQL', 'Redis', 'SQL', 'Docker', 'Git'] },
-          { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['React', 'Vite', 'Tailwind CSS'] },
-          { name: 'CREATIVE_ENG', hex: '0xCE44', items: ['Figma', 'Photoshop', 'Aseprite', 'Godot'] }
+          { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['HTMX', 'JavaScipt', 'Tailwind CSS', 'HTML5'] },
+          { name: 'CREATIVE_ENG', hex: '0xCE44', items: ['Figma', 'Photoshop', 'Aseprite', 'Godot','Blender','Clip Studio Paint', ] }
         ]
       },
-      {
-        id: 'network', label: 'UPLINK_NODE', code: '0x00D4', icon: Globe, color: 'text-yellow-400', bgColor: 'bg-yellow-500', border: 'border-yellow-400', img: tempImg2,
-        type: 'network', title: t('net_title'), content: t('net_desc'),
+      { id: 'network', label: 'UPLINK_NODE', code: '0x00D4', icon: Globe, color: 'text-yellow-400', bgColor: 'bg-yellow-500', border: 'border-yellow-400', img: tempImg2, type: 'network', title: t('net_title'), content: t('net_desc'),
         links: [
           { name: 'TELEGRAM', url: 'https://t.me/soka8imokenp', icon: Send, color: 'text-[#0088cc]' },
           { name: 'GITHUB', url: 'https://github.com/soka8imokenp', icon: Code, color: 'text-white' },
@@ -733,49 +782,30 @@ const IntegratedGameUI = () => {
       }
     ];
 
-    if (isRedAlert) {
-      return [...baseTabs, { 
-        id: 'classified', label: t('tab_class'), code: '0xDEAD', icon: Skull, color: 'text-red-500', bgColor: 'bg-red-600', border: 'border-red-500', img: tempImg2, 
-        type: 'text', title: t('class_title'), content: t('class_desc') 
-      }];
-    }
+    if (isRedAlert) return [...baseTabs, { id: 'classified', label: t('tab_class'), code: '0xDEAD', icon: Skull, color: 'text-red-500', bgColor: 'bg-red-600', border: 'border-red-500', img: tempImg2, type: 'text', title: t('class_title'), content: t('class_desc') }];
     return baseTabs;
   }, [lang, isRedAlert, t]);
 
   const activeTabData = useMemo(() => tabs.find(t => t.id === activeTab), [tabs, activeTab]);
 
-  // --- ЭКРАН БЛОКИРОВКИ ДЛЯ МОБИЛОК ---
   if (isMobile) {
     return (
       <div className="h-screen w-full bg-[#05050a] flex flex-col items-center justify-center p-6 font-mono overflow-hidden relative selection:bg-red-500/30 text-center">
-        {/* CRT Эффекты */}
         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px] z-20"></div>
         <div className="absolute inset-0 z-10 pointer-events-none bg-red-500/5 mix-blend-overlay"></div>
         <div className="absolute top-0 left-0 w-full h-1 bg-red-500/30 animate-[scan_3s_linear_infinite] z-20 shadow-[0_0_10px_red]"></div>
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          className="relative z-30 border border-red-500/50 bg-black/80 p-8 w-full max-w-sm shadow-[0_0_50px_rgba(239,68,68,0.2)]"
-        >
-          {/* Декоративные углы */}
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative z-30 border border-red-500/50 bg-black/80 p-8 w-full max-w-sm shadow-[0_0_50px_rgba(239,68,68,0.2)]">
           <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-red-500"></div>
           <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-red-500"></div>
           <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-red-500"></div>
           <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-red-500"></div>
 
           <ShieldAlert size={64} className="mx-auto text-red-500 mb-6 animate-pulse drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-          
-          <h1 className="text-xl md:text-2xl font-bold text-red-500 tracking-widest mb-2 font-bebas uppercase">
-            {t('mobile_warn_title')}
-          </h1>
-          <div className="w-full h-[1px] bg-red-500/30 mb-6 relative">
-            <div className="absolute left-1/2 -translate-x-1/2 -top-[3px] w-8 h-[7px] bg-red-500/50"></div>
-          </div>
+          <h1 className="text-xl md:text-2xl font-bold text-red-500 tracking-widest mb-2 font-bebas uppercase">{t('mobile_warn_title')}</h1>
+          <div className="w-full h-[1px] bg-red-500/30 mb-6 relative"><div className="absolute left-1/2 -translate-x-1/2 -top-[3px] w-8 h-[7px] bg-red-500/50"></div></div>
 
-          <p className="text-white/70 text-xs leading-relaxed mb-8">
-            <Typewriter text={t('mobile_warn_desc')} speed={20} />
-          </p>
+          <p className="text-white/70 text-xs leading-relaxed mb-8"><Typewriter text={t('mobile_warn_desc')} speed={20} /></p>
 
           <div className="flex justify-center items-center gap-6 text-white/30">
              <Smartphone size={32} className="text-red-500 opacity-50 relative line-through" />
@@ -783,16 +813,10 @@ const IntegratedGameUI = () => {
              <Monitor size={48} className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
           </div>
 
-          <div className="mt-8 text-[10px] text-red-500/50 tracking-widest uppercase">
-            ERR_CODE: 0xDEVICE_UNSUPPORTED
-          </div>
+          <div className="mt-8 text-[10px] text-red-500/50 tracking-widest uppercase">ERR_CODE: 0xDEVICE_UNSUPPORTED</div>
           
-          {/* Кнопка смены языка на мобилке */}
           <div className="absolute -top-16 right-0">
-             <div 
-                onClick={() => setLangIndex((prev) => (prev + 1) % LANGS.length)}
-                className="flex items-center gap-2 text-white/50 border border-white/20 px-3 py-1 text-xs uppercase"
-             >
+             <div onClick={() => setLangIndex((prev) => (prev + 1) % LANGS.length)} className="flex items-center gap-2 text-white/50 border border-white/20 px-3 py-1 text-xs uppercase">
                 <Globe size={12} /> {lang}
              </div>
           </div>
@@ -803,6 +827,7 @@ const IntegratedGameUI = () => {
 
   return (
     <>
+      <VanillaCyberCursor />
       <style dangerouslySetInnerHTML={{__html: `
         .cyber-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
         .cyber-scroll::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
@@ -815,29 +840,18 @@ const IntegratedGameUI = () => {
       `}} />
 
       <div className="h-screen w-full bg-[#020202] flex items-center justify-center p-2 md:p-6 select-none overflow-hidden relative font-mono">
-        <SmartCursor />
-
         <div className="relative w-full h-full crt-lens scanlines bg-[#05050a] overflow-hidden shadow-[0_0_50px_rgba(0,255,255,0.05)] border-2 border-white/5">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] z-0 pointer-events-none"></div>
           <div className="noise-overlay"></div>
           <div className={`absolute inset-0 z-10 pointer-events-none mix-blend-overlay transition-colors duration-1000 ${isRedAlert ? 'bg-red-500/30' : 'bg-transparent'}`}></div>
 
-          <video 
-            ref={videoRef} loop playsInline muted={isMuted}
-            // УДАЛИЛИ onTimeUpdate ТУТ!
-            onCanPlayThrough={handleVideoCanPlay}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] z-0 ${systemState === 'ready' ? 'opacity-[0.25]' : 'opacity-0'}`}
-          >
+          <video ref={videoRef} loop playsInline muted={isMuted} onCanPlayThrough={handleVideoCanPlay} className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] z-0 ${systemState === 'ready' ? 'opacity-[0.25]' : 'opacity-0'}`}>
             <source src="/background.mp4" type="video/mp4" />
           </video>
 
           <AnimatePresence mode="wait">
             {systemState !== 'ready' && (
-              <motion.div
-                key="boot-screen"
-                initial={{ opacity: 1 }} exit={{ opacity: 0, filter: "brightness(3)", scale: 1.05 }} transition={{ duration: 0.6 }}
-                className="absolute inset-0 z-50 flex flex-col items-center justify-center p-10 md:p-24 bg-black font-mono"
-              >
+              <motion.div key="boot-screen" initial={{ opacity: 1 }} exit={{ opacity: 0, filter: "brightness(3)", scale: 1.05 }} transition={{ duration: 0.6 }} className="absolute inset-0 z-50 flex flex-col items-center justify-center p-10 md:p-24 bg-black font-mono">
                 <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-40 brightness-100 mix-blend-screen pointer-events-none">
                   <source src="/no-signal.mp4" type="video/mp4" />
                 </video>
@@ -894,10 +908,8 @@ const IntegratedGameUI = () => {
                     {systemState === 'idle' ? (
                       videoLoaded ? (
                         <motion.div
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: [1, 0.7, 1], scale: 1 }}
-                          transition={{ opacity: { repeat: Infinity, duration: 2 }, scale: { duration: 0.3 } }}
-                          className="text-white hover:text-black hover:bg-white transition-all flex items-center gap-4 text-3xl md:text-4xl font-bold bg-white/5 px-10 py-4 border border-white clickable cursor-pointer"
+                          initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: [1, 0.7, 1], scale: 1 }} transition={{ opacity: { repeat: Infinity, duration: 2 }, scale: { duration: 0.3 } }}
+                          className="text-white hover:text-black hover:bg-white transition-all flex items-center gap-4 text-3xl md:text-4xl font-bold bg-white/5 px-10 py-4 border border-white clickable"
                           onClick={handleStart}
                         >
                           <Terminal size={36} /> [ {t('override')} ]
@@ -909,11 +921,7 @@ const IntegratedGameUI = () => {
                             <span className="text-cyan-400">{Math.floor(preLoadProgress)}%</span>
                           </div>
                           <div className="w-full h-2 bg-white/5 border border-white/10 relative overflow-hidden">
-                            <motion.div
-                              className="absolute top-0 left-0 h-full bg-cyan-400 shadow-[0_0_15px_#22d3ee]"
-                              animate={{ width: `${preLoadProgress}%` }}
-                              transition={{ ease: "linear", duration: 0.2 }}
-                            />
+                            <motion.div className="absolute top-0 left-0 h-full bg-cyan-400 shadow-[0_0_15px_#22d3ee]" animate={{ width: `${preLoadProgress}%` }} transition={{ ease: "linear", duration: 0.2 }} />
                           </div>
                         </div>
                       )
@@ -944,29 +952,19 @@ const IntegratedGameUI = () => {
                     <span className={`${isRedAlert ? 'text-red-500 animate-ping' : 'text-red-500 animate-pulse'} flex items-center gap-2`}>● REC</span>
                     <span className={isRedAlert ? 'text-red-500' : ''}>{isRedAlert ? t('sys_breach') : t('sys_online')}</span>
                   </div>
-                  <div className="flex gap-8 items-center clickable cursor-pointer hover:text-white transition-colors font-mono" onClick={handleIpClick}>
+                  <div className="flex gap-8 items-center clickable hover:text-white transition-colors font-mono" onClick={handleIpClick}>
                     <span className={isRedAlert ? 'text-red-500 font-bold animate-pulse font-mono' : 'font-mono'}>192.168.0.27_ROOT</span>
                   </div>
                 </div>
 
                 <div className="absolute top-24 left-[5%] z-50 flex flex-row items-center gap-4">
-                  <div 
-                    onClick={() => { setLangIndex((prev) => (prev + 1) % LANGS.length); playSound(1000, 'square', 0.05); }}
-                    className={`clickable flex items-center justify-center gap-2 h-14 px-4 bg-black/90 border transition-all z-20 ${isRedAlert ? 'border-red-500/50 hover:border-red-500 hover:bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 hover:bg-white/10 text-white/70 hover:text-white'} backdrop-blur-md font-mono text-[10px] md:text-xs tracking-widest uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
-                  >
-                    <Globe size={16} className={isRedAlert ? "text-red-500" : "text-cyan-400"} />
-                    [ {lang} ]
+                  <div onClick={() => { setLangIndex((prev) => (prev + 1) % LANGS.length); playSound(1000, 'square', 0.05); }} className={`clickable flex items-center justify-center gap-2 h-14 px-4 bg-black/90 border transition-all z-20 ${isRedAlert ? 'border-red-500/50 hover:border-red-500 hover:bg-red-500/10 text-red-500' : 'border-white/20 hover:border-white/50 hover:bg-white/10 text-white/70 hover:text-white'} backdrop-blur-md font-mono text-[10px] md:text-xs tracking-widest uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)]`}>
+                    <Globe size={16} className={isRedAlert ? "text-red-500" : "text-cyan-400"} /> [ {lang} ]
                   </div>
 
                   <div className="flex flex-row items-center relative">
-                    <div 
-                      onClick={() => setIsVolumeExpanded(!isVolumeExpanded)}
-                      className={`clickable flex items-center justify-center w-14 h-14 bg-black/90 border backdrop-blur-md transition-all z-20 ${isVolumeExpanded ? 'border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'border-white/60 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:bg-white/10 hover:border-white'}`}
-                    >
-                      {isMuted || volume === 0 
-                        ? <VolumeX size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white opacity-60'} />
-                        : <Volume2 size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white'} />
-                      }
+                    <div onClick={() => setIsVolumeExpanded(!isVolumeExpanded)} className={`clickable flex items-center justify-center w-14 h-14 bg-black/90 border backdrop-blur-md transition-all z-20 ${isVolumeExpanded ? 'border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'border-white/60 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] hover:bg-white/10 hover:border-white'}`}>
+                      {isMuted || volume === 0 ? <VolumeX size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white opacity-60'} /> : <Volume2 size={24} strokeWidth={2.5} className={isRedAlert ? 'text-red-500' : 'text-white'} />}
                     </div>
                     <AnimatePresence>
                       {isVolumeExpanded && (
@@ -1013,7 +1011,6 @@ const IntegratedGameUI = () => {
                       </div>
                     );
                   })}
-                  {/* ИЗОЛИРОВАННЫЙ ПРОГРЕСС-БАР ТУТ */}
                   <MediaSyncBar videoRef={videoRef} isRedAlert={isRedAlert} t={t} />
                 </nav>
 
@@ -1047,31 +1044,19 @@ const IntegratedGameUI = () => {
                             
                             <div className="text-base md:text-lg text-white leading-relaxed font-bold flex-1 flex flex-col">
                               <div className="mb-6 text-white/50 text-sm"><Typewriter text={activeTabData.title} speed={30} /></div>
-                              
                               {activeTabData.type === 'text' && <p className="text-white text-lg leading-loose"><Typewriter text={activeTabData.content} speed={15} /></p>}
                               
                               {activeTabData.type === 'skills' && (
                                 <div className={`mt-4 flex flex-col gap-6 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
                                   {activeTabData.categories.map((cat, i) => (
-                                    <motion.div 
-                                      key={i} 
-                                      initial={{ opacity: 0, x: -20 }} 
-                                      animate={{ opacity: 1, x: 0 }} 
-                                      transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
-                                      className="flex flex-col gap-3 shrink-0"
-                                    >
+                                    <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }} className="flex flex-col gap-3 shrink-0">
                                       <div className="flex items-center gap-2 border-b border-white/10 pb-1">
                                         <span className={`text-[10px] font-mono ${isRedAlert ? 'text-red-500' : 'text-lime-400'}`}>[{cat.hex}]</span>
                                         <span className="text-sm font-bold text-white tracking-widest">{cat.name}</span>
                                       </div>
-                                      
                                       <div className="grid grid-cols-2 gap-2">
                                         {cat.items.map((item, j) => (
-                                          <div 
-                                            key={j} 
-                                            className={`flex items-center justify-between border border-white/10 bg-black/40 p-2 hover:border-white/30 transition-colors group ${isRedAlert ? 'hover:bg-red-500/10' : 'hover:bg-lime-400/10'}`}
-                                            onMouseEnter={() => playSound(800, 'sine', 0.02)}
-                                          >
+                                          <div key={j} className={`flex items-center justify-between border border-white/10 bg-black/40 p-2 hover:border-white/30 transition-colors group ${isRedAlert ? 'hover:bg-red-500/10' : 'hover:bg-lime-400/10'}`} onMouseEnter={() => playSound(800, 'sine', 0.02)}>
                                             <span className="text-xs text-white/70 group-hover:text-white font-mono transition-colors truncate pr-2">{item}</span>
                                             <div className="flex items-center gap-2 shrink-0">
                                               <span className={`w-1.5 h-1.5 rounded-full ${isRedAlert ? 'bg-red-500 animate-pulse shadow-[0_0_5px_#ef4444]' : 'bg-lime-400 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_5px_#a3e635]'}`}></span>
@@ -1088,11 +1073,7 @@ const IntegratedGameUI = () => {
                               {activeTabData.type === 'projects' && (
                                 <div className={`mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
                                   {activeTabData.items.map((proj, i) => (
-                                    <motion.div
-                                      key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
-                                      className="group flex items-center justify-between p-4 border border-white/10 bg-black/40 hover:border-pink-500 hover:bg-pink-500/20 cursor-pointer transition-all clickable shrink-0 backdrop-blur-sm"
-                                      onClick={() => { playSound(1000, 'square', 0.05); setProjectViewMode('data'); setSelectedProject(proj); }}
-                                    >
+                                    <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }} className="group flex items-center justify-between p-4 border border-white/10 bg-black/40 hover:border-pink-500 hover:bg-pink-500/20 cursor-pointer transition-all clickable shrink-0 backdrop-blur-sm" onClick={() => { playSound(1000, 'square', 0.05); setProjectViewMode('data'); setSelectedProject(proj); }}>
                                       <div className="flex items-center gap-4">
                                         <Folder size={20} className="text-white/30 group-hover:text-pink-500 transition-colors" />
                                         <span className="text-white/90 group-hover:text-white font-mono text-base tracking-widest">{proj.name}</span>
@@ -1108,26 +1089,12 @@ const IntegratedGameUI = () => {
 
                               {activeTabData.type === 'network' && (
                                 <div className="mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 cyber-scroll">
-                                  <p className="text-sm text-white/70 leading-relaxed mb-4">
-                                    <Typewriter text={activeTabData.content} speed={15} />
-                                  </p>
+                                  <p className="text-sm text-white/70 leading-relaxed mb-4"><Typewriter text={activeTabData.content} speed={15} /></p>
                                   <div className="grid grid-cols-1 gap-4">
                                     {activeTabData.links.map((socialItem, i) => {
                                       const IconComponent = socialItem.icon;
-                                      
                                       return (
-                                        <motion.a
-                                          key={i}
-                                          href={socialItem.url}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          initial={{ opacity: 0, y: 10 }} 
-                                          animate={{ opacity: 1, y: 0 }} 
-                                          transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }}
-                                          onClick={() => playSound(1000, 'square', 0.1)}
-                                          onMouseEnter={() => playSound(600, 'sine', 0.02)}
-                                          className="group relative flex items-center justify-between p-5 border border-white/10 bg-black/40 hover:bg-white/5 transition-all clickable shrink-0 backdrop-blur-sm overflow-hidden"
-                                        >
+                                        <motion.a key={i} href={socialItem.url} target="_blank" rel="noopener noreferrer" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }} onClick={() => playSound(1000, 'square', 0.1)} onMouseEnter={() => playSound(600, 'sine', 0.02)} className="group relative flex items-center justify-between p-5 border border-white/10 bg-black/40 hover:bg-white/5 transition-all clickable shrink-0 backdrop-blur-sm overflow-hidden">
                                           <div className="absolute inset-0 w-0 bg-yellow-400/10 group-hover:w-full transition-all duration-300 ease-out z-0"></div>
                                           <div className="relative z-10 flex items-center gap-6">
                                             <div className={`p-2 border border-white/20 bg-black group-hover:border-yellow-400 transition-colors flex items-center justify-center`}>
@@ -1145,7 +1112,6 @@ const IntegratedGameUI = () => {
                                   </div>
                                 </div>
                               )}
-
                             </div>
                           </div>
                         </div>
@@ -1159,36 +1125,18 @@ const IntegratedGameUI = () => {
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-sm pointer-events-auto" onClick={() => { setSelectedProject(null); setProjectViewMode('data'); }}>
                       <motion.div 
                         onClick={(e) => e.stopPropagation()} 
-                        initial={{ scale: 0.95, opacity: 0 }} 
-                        animate={{ 
-                          scale: 1, opacity: 1,
-                          width: projectViewMode === 'visuals' ? '95vw' : '100%',
-                          height: projectViewMode === 'visuals' ? '90vh' : 'auto',
-                          maxWidth: projectViewMode === 'visuals' ? '1600px' : '42rem' 
-                        }} 
-                        exit={{ scale: 0.95, opacity: 0 }} 
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1, width: projectViewMode === 'visuals' ? '95vw' : '100%', height: projectViewMode === 'visuals' ? '90vh' : 'auto', maxWidth: projectViewMode === 'visuals' ? '1600px' : '42rem' }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                         className="relative bg-black border border-white/20 shadow-[0_0_50px_rgba(236,72,153,0.15)] font-mono flex flex-col overflow-hidden"
                       >
                         {projectViewMode === 'data' && (
                           <div className="flex justify-between items-center bg-white/5 border-b border-white/10 px-4 py-3 relative z-20">
-                            <div className="flex items-center gap-3">
-                              <Terminal size={16} className="text-pink-500" />
-                              <span className="text-xs text-white/50 tracking-widest">{t('secure')} // {selectedProject.name}</span>
-                            </div>
+                            <div className="flex items-center gap-3"><Terminal size={16} className="text-pink-500" /><span className="text-xs text-white/50 tracking-widest">{t('secure')} // {selectedProject.name}</span></div>
                             <button onClick={() => { setSelectedProject(null); setProjectViewMode('data'); }} className="text-white/40 hover:text-red-500 transition-colors clickable text-xs tracking-widest">[ {t('disconnect')} ]</button>
                           </div>
                         )}
-                        
                         <div className={`relative flex flex-col ${projectViewMode === 'data' ? 'flex-1 min-h-[400px]' : 'w-full h-full flex-1'}`}>
                           {projectViewMode === 'data' && <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none z-10 opacity-30"></div>}
-                          <TerminalSimulation 
-                             project={selectedProject} 
-                             playSound={playSound} 
-                             t={t} 
-                             viewMode={projectViewMode} 
-                             setViewMode={setProjectViewMode} 
-                          />
+                          <TerminalSimulation project={selectedProject} playSound={playSound} t={t} viewMode={projectViewMode} setViewMode={setProjectViewMode} />
                         </div>
                       </motion.div>
                     </motion.div>
