@@ -1036,18 +1036,18 @@ const IntegratedGameUI = () => {
                           <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white/20 z-10"></div>
                           <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white/20 z-10"></div>
                           
-                          <div className="relative z-10 flex-1 flex flex-col h-full">
-                            <div className="text-[10px] md:text-xs text-white/40 mb-4 tracking-[0.2em] flex justify-between uppercase border-b border-white/10 pb-4">
+                          <div className="relative z-10 flex-1 flex flex-col h-full min-h-0 overflow-hidden">
+                            <div className="text-[10px] md:text-xs text-white/40 mb-4 tracking-[0.2em] flex justify-between uppercase border-b border-white/10 pb-4 shrink-0">
                               <span>{t('status_decrypted')} // {activeTabData.code}</span>
                               <span className={activeTabData.id === 'classified' ? 'text-red-500 animate-pulse' : 'text-cyan-400'}>{t('access_granted')}</span>
                             </div>
                             
-                            <div className="text-base md:text-lg text-white leading-relaxed font-bold flex-1 flex flex-col">
-                              <div className="mb-6 text-white/50 text-sm"><Typewriter text={activeTabData.title} speed={30} /></div>
-                              {activeTabData.type === 'text' && <p className="text-white text-lg leading-loose"><Typewriter text={activeTabData.content} speed={15} /></p>}
+                            <div className="text-base md:text-lg text-white leading-relaxed font-bold flex-1 flex flex-col min-h-0">
+                              <div className="mb-6 text-white/50 text-sm shrink-0"><Typewriter text={activeTabData.title} speed={30} /></div>
+                              {activeTabData.type === 'text' && <div className="flex-1 overflow-y-auto cyber-scroll pr-4"><p className="text-white text-lg leading-loose"><Typewriter text={activeTabData.content} speed={15} /></p></div>}
                               
                               {activeTabData.type === 'skills' && (
-                                <div className={`mt-4 flex flex-col gap-6 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
+                                <div className={`mt-2 flex flex-col gap-6 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
                                   {activeTabData.categories.map((cat, i) => (
                                     <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }} className="flex flex-col gap-3 shrink-0">
                                       <div className="flex items-center gap-2 border-b border-white/10 pb-1">
@@ -1071,7 +1071,7 @@ const IntegratedGameUI = () => {
                               )}
 
                               {activeTabData.type === 'projects' && (
-                                <div className={`mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
+                                <div className={`mt-2 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 ${isRedAlert ? 'cyber-scroll-red' : 'cyber-scroll'}`}>
                                   {activeTabData.items.map((proj, i) => (
                                     <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 + (i * 0.1) }} className="group flex items-center justify-between p-4 border border-white/10 bg-black/40 hover:border-pink-500 hover:bg-pink-500/20 cursor-pointer transition-all clickable shrink-0 backdrop-blur-sm" onClick={() => { playSound(1000, 'square', 0.05); setProjectViewMode('data'); setSelectedProject(proj); }}>
                                       <div className="flex items-center gap-4">
@@ -1088,9 +1088,11 @@ const IntegratedGameUI = () => {
                               )}
 
                               {activeTabData.type === 'network' && (
-                                <div className="mt-4 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 cyber-scroll">
-                                  <p className="text-sm text-white/70 leading-relaxed mb-4"><Typewriter text={activeTabData.content} speed={15} /></p>
-                                  <div className="grid grid-cols-1 gap-4">
+                                <div className="mt-2 flex flex-col gap-4 flex-1 overflow-y-auto pr-4 cyber-scroll">
+                                  <div className="shrink-0 mb-4">
+                                     <p className="text-sm text-white/70 leading-relaxed"><Typewriter text={activeTabData.content} speed={15} /></p>
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-4 pb-4">
                                     {activeTabData.links.map((socialItem, i) => {
                                       const IconComponent = socialItem.icon;
                                       return (
