@@ -768,7 +768,7 @@ const IntegratedGameUI = () => {
         categories: [
           { name: 'BACKEND_CORE', hex: '0xBA11', items: ['Python', 'Django', 'FastAPI', 'Aiogram'] },
           { name: 'DATA_&_INFRA', hex: '0xDA22', items: ['PostgreSQL', 'Redis', 'SQL', 'Docker', 'Git'] },
-          { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['HTMX', 'JavaScipt', 'Tailwind CSS', 'HTML5'] },
+          { name: 'FRONTEND_ENV', hex: '0xFE33', items: ['HTMX', 'JavaScript', 'Tailwind CSS', 'HTML5'] },
           { name: 'CREATIVE_ENG', hex: '0xCE44', items: ['Figma', 'Photoshop', 'Aseprite', 'Godot','Blender','Clip Studio Paint', ] }
         ]
       },
